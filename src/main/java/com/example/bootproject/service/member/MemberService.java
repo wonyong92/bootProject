@@ -1,10 +1,12 @@
 package com.example.bootproject.service.member;
 
-import com.example.bootproject.controller.LoginDto;
+import com.example.bootproject.vo.LoginDto;
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.vo.MemberCreateDto;
 import com.example.bootproject.vo.MemberUpdateDto;
-import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public interface MemberService {
     boolean memberCreate(MemberCreateDto dto);
@@ -16,4 +18,6 @@ public interface MemberService {
     boolean deleteMemberById(String id);
 
     Member doLogin(LoginDto dto);
+
+    boolean logout(HttpSession session, HttpServletResponse resp);
 }

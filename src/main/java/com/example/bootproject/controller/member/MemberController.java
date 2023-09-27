@@ -26,9 +26,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/test")
-    public ResponseEntity<Map<String, String>> testHandler() {
+    public ResponseEntity<Map<String, String>> testHandler(HttpSession session) {
         log.info("test controller");
         log.info(memberRepository.findAll().toString());
+        log.info(session.getAttribute("id").toString());
         return ResponseEntity.ok(Map.of("test", "test"));
     }
 

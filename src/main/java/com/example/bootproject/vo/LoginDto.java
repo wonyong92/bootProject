@@ -1,4 +1,4 @@
-package com.example.bootproject.controller;
+package com.example.bootproject.vo;
 
 import lombok.Data;
 

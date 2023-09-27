@@ -1,6 +1,6 @@
 package com.example.bootproject.service.member;
 
-import com.example.bootproject.controller.LoginDto;
+import com.example.bootproject.vo.LoginDto;
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.vo.MemberCreateDto;
@@ -8,6 +8,10 @@ import com.example.bootproject.vo.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +64,18 @@ public class MemberServiceImpl implements MemberService {
             return findMember;
         }
         return null;
+    }
+
+    @Override
+    public boolean logout(HttpSession session, HttpServletResponse resp) {
+        if(session.getAttribute("id") != null)
+        {
+            session.invalidate();
+            Cookie cookie = new Cookie("JSESSIONID",null);
+            cookie.setMaxAge(0);
+            resp.addCookie(cookie);
+            return true;
+        }
+        return false;
     }
 }

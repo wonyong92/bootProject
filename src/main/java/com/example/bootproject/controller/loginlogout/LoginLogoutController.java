@@ -1,15 +1,19 @@
-package com.example.bootproject.controller;
+package com.example.bootproject.controller.loginlogout;
 
+import com.example.bootproject.vo.LoginDto;
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -27,5 +31,11 @@ public class LoginLogoutController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session, HttpServletResponse resp){
+        boolean result = memberService.logout(session,resp);
+        return result ? new ResponseEntity<>(HttpStatus.OK):new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }
