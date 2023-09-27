@@ -7,7 +7,9 @@
     <!-- 콘솔 출력 설정 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+            <pattern>LOGBACK : [%d{yyyy/MM/dd HH:mm:ss}] %highlight(%-5level)| %cyan(%-25.25logger{0}) | %msg%n
+            </pattern>
         </encoder>
     </appender>
 
