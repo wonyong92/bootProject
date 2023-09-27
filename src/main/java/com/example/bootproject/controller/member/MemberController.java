@@ -1,5 +1,6 @@
 package com.example.bootproject.controller.member;
 
+import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.service.member.MemberService;
 import com.example.bootproject.vo.MemberCreateDto;
@@ -56,5 +57,11 @@ public class MemberController {
 
         memberService.memberUpdate(dto);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<Member> readMember(@RequestParam String id){
+        Member member = memberService.getMemberById(id);
+        return new ResponseEntity<>(member,HttpStatus.OK);
     }
 }
