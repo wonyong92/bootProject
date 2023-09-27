@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -35,6 +36,7 @@ public class MemberController {
     public ResponseEntity<Void> createMember(@ModelAttribute @Valid MemberCreateDto dto, BindingResult result) throws Exception {
         log.info("member create request");
         log.info("body : {}", dto);
+
         if (result.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder("Validation errors:\n");
             result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append("\n"));
@@ -46,7 +48,7 @@ public class MemberController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Void> updateMember(@ModelAttribute @Valid MemberUpdateDto dto, BindingResult result, HttpSession session) throws Exception {
+    public ResponseEntity<Void> updateMember(@ModelAttribute MemberUpdateDto dto, BindingResult result, HttpSession session) throws Exception {
         log.info("member update request");
         log.info("body : {}", dto);
         if (result.hasErrors()) {
@@ -63,5 +65,12 @@ public class MemberController {
     public ResponseEntity<Member> readMember(@RequestParam String id){
         Member member = memberService.getMemberById(id);
         return new ResponseEntity<>(member,HttpStatus.OK);
+    }
+
+    @GetMapping("/delete")
+    public ResponseEntity<Void> deleteMember(@RequestParam String id)
+    {
+        boolean result = memberService.deleteMemberById(id);
+        return result?new ResponseEntity<>(HttpStatus.OK):ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }

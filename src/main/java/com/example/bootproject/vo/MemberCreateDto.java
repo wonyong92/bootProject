@@ -3,23 +3,18 @@ package com.example.bootproject.vo;
 import com.example.bootproject.entity.member.Member;
 import lombok.Data;
 
-import javax.persistence.Id;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
-@Valid
+//@Valid
 public class MemberCreateDto {
-    @NotNull
-    String id;
-    @NotNull
-    String name;
-    @NotNull
-    String email;
-    @NotNull
-    String pwd;
+    //@NotNull//blank는 허용
+    @NotBlank String id;
+    @NotBlank String name;
+    @NotBlank String email;
+    @NotBlank String pwd;
 
-    public Member toEntity(){
-        return new Member(id,name,email,pwd);
-    };
+    public Member toEntity() {
+        return new Member(id, name, email, pwd);
+    }
 }
