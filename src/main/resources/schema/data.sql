@@ -1,1 +1,2 @@
-insert into MEMBER values ('test');
+# insert into MEMBER values ('test');
+;;
