@@ -5,7 +5,10 @@ import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.repository.post.PostRepository;
 import com.example.bootproject.vo.request.postCreateDto;
+import com.example.bootproject.vo.response.PostResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,5 +33,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getPost(Integer postId) {
         return postRepository.findById(postId).orElse(null);
+    }
+
+    @Override
+    public Page<PostResponseDto> findAll(Pageable pageable) {
+        return postRepository.findAllDto(pageable);
     }
 }
