@@ -1,4 +1,4 @@
-package com.example.bootproject.vo;
+package com.example.bootproject.vo.request;
 
 import com.example.bootproject.entity.member.Member;
 import lombok.Data;

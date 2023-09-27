@@ -1,3 +1,4 @@
+drop table if exists POST;
 drop table if exists Member;
 create table MEMBER(
     id varchar(30) primary key,
@@ -5,10 +6,10 @@ create table MEMBER(
     pwd varchar(30),
     email varchar(40)
 );
-drop table if exists Post;
-
 create table POST(
-    id integer auto_increment primary key ,
-    title varchar(254),
-    content text
-)
+                     id integer auto_increment primary key ,
+                     title varchar(254),
+                     content longtext,
+                    writer_id varchar(30),
+                    foreign key (writer_id) references member(id)
+                 );

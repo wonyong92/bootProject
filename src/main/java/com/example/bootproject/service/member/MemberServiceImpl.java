@@ -1,10 +1,10 @@
 package com.example.bootproject.service.member;
 
-import com.example.bootproject.vo.LoginDto;
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.repository.member.MemberRepository;
-import com.example.bootproject.vo.MemberCreateDto;
-import com.example.bootproject.vo.MemberUpdateDto;
+import com.example.bootproject.vo.request.LoginRequestDto;
+import com.example.bootproject.vo.request.MemberCreateDto;
+import com.example.bootproject.vo.request.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean deleteMemberById(String id) {
         Member findMember = memberRepository.findById(id).orElse(null);
-        log.info("delete found : {}",findMember);
+        log.info("delete found : {}", findMember);
         if (findMember != null) {
             memberRepository.delete(findMember);
             return true;
@@ -58,20 +58,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member doLogin(LoginDto dto) {
-        Member findMember = memberRepository.findByIdAndPwd(dto.getId(),dto.getPwd());
-        if(findMember != null){
-            return findMember;
-        }
-        return null;
+    public Member doLogin(LoginRequestDto dto) {
+        Member findMember = memberRepository.findByIdAndPwd(dto.getId(), dto.getPwd());
+        return findMember;
     }
 
     @Override
     public boolean logout(HttpSession session, HttpServletResponse resp) {
-        if(session.getAttribute("id") != null)
-        {
+        if (session.getAttribute("id") != null) {
             session.invalidate();
-            Cookie cookie = new Cookie("JSESSIONID",null);
+            Cookie cookie = new Cookie("JSESSIONID", null);
             cookie.setMaxAge(0);
             resp.addCookie(cookie);
             return true;
