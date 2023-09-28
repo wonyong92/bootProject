@@ -2,13 +2,17 @@ package com.example.bootproject.entity.post;
 
 import com.example.bootproject.entity.member.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class Post {
     @Id
@@ -24,14 +28,24 @@ public class Post {
     @JoinColumn(name = "writer_id")
     Member writer;
 
-    public Post(String title, String content, Member writer) {
+    Integer parentId;
+
+    private String file1;
+    private String file2;
+
+    public Post(String title, String content, Member member, Integer parentId) {
         this.title = title;
         this.content = content;
-        this.writer = writer;
+        this.writer = member;
+        this.parentId = parentId;
     }
 
-    public Post(Integer postId, String title, String content, Member member) {
-        this(title, content, member);
+    public Post(Integer postId, String title, String content, Member member, Integer parentId) {
         this.id = postId;
+        this.title = title;
+        this.content = content;
+        this.writer = member;
+        this.parentId = parentId;
+
     }
 }

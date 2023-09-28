@@ -13,8 +13,11 @@ create table POST(
                      content longtext,
                     writer_id varchar(30),
                     parent_id integer,
+                    file1 varchar(254),
+                    file2 varchar(254),
                     constraint post_member_writer_id_fk foreign key (writer_id) references member(id),
-                    constraint post_post_parent_id_fk foreign key (parent_id) references post(id)
+                    constraint post_post_parent_id_fk foreign key (parent_id) references post(id),
+                    unique(id,file1,file2)
                  );
 create table comment(
     id bigint auto_increment primary key ,

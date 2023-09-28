@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,15 +15,19 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Optional<Post> findById(Integer id);
 
     Page<Post> findAll(Pageable pageable);
+    Page<Post> findByParentIdIsNull(Pageable pageable);
+
+    Page<Post> findByWriterIdAndParentIdIsNull(String memberId, Pageable pageable);
+    Page<Post> findByWriterId(String memberId,Pageable pageable);
 
     default Page<PostResponseDto> findAllDto(Pageable pageable) {
-        Page<Post> page = findAll(pageable);
+        Page<Post> page = findByParentIdIsNull(pageable);
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     }
 
     default Page<PostResponseDto> findAllDtoByMemberId(Pageable pageable, String memberId) {
-        Page<Post> page = findByWriterId(pageable, memberId);
+        Page<Post> page = findByWriterIdAndParentIdIsNull(memberId,pageable);
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     }
@@ -36,4 +41,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
         return findById(postId).orElse(null) == null;
     }
 
+    List<Post> findByParentId(Integer parentId);
 }

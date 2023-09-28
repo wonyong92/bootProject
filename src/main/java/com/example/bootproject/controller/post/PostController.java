@@ -7,11 +7,14 @@ import com.example.bootproject.vo.request.post.postCreateDto;
 import com.example.bootproject.vo.response.post.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import static com.example.bootproject.system.util.BindingResultUtil.extracted;
 
@@ -35,14 +40,17 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
-
+        //질문글 생성 API 에 답글 데이터 요청 방지
+        if(dto.getParentId()!=null){
+            return ResponseEntity.badRequest().build();
+        }
         extracted(result);
 
         String id = SessionUtil.getLoginId(session);
 
         long createResult = postService.createPost(dto, id);
         log.info("writer id {} created id : {}", id, createResult);
-        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.noContent().build();
+        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/read/{postId}")
@@ -100,4 +108,42 @@ public class PostController {
         log.info("writer id {} updated post id : {}", id, createResult);
         return createResult ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/answers")
+    public ResponseEntity<? extends Object> getPostsByParentId(@RequestParam Integer parentId) {
+        if (parentId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(postService.getPostsByParentId(parentId));
+    }
+
+    @PostMapping("/create/answer")
+    public ResponseEntity<? extends Object> createAnswerPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
+
+        if (dto.getParentId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        extracted(result);
+
+        String id = SessionUtil.getLoginId(session);
+
+        long createResult = postService.createPost(dto, id);
+        log.info("writer id {} created id : {}", id, createResult);
+        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(@RequestParam Integer postId,@RequestParam(defaultValue = "1") int fileNum) throws IOException {
+
+        Resource resource = postService.loadFileAsResource(postId,fileNum);
+        if(resource==null){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(resource.getFilename().split("_|\\.")[0]+'.'+resource.getFilename().split("_|\\.")[2],"UTF-8") + "\"")
+                .body(resource);
+    }
+
 }
