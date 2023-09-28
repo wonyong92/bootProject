@@ -1,5 +1,6 @@
 package com.example.bootproject.entity.post;
 
+import com.example.bootproject.entity.comment.Comment;
 import com.example.bootproject.entity.member.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +29,11 @@ public class Post {
     @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "writer_id")
     Member writer;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
+
+    List<Comment> comments;
 
     Integer parentId;
 

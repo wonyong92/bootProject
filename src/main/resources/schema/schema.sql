@@ -15,8 +15,8 @@ create table POST(
                     parent_id integer,
                     file1 varchar(254),
                     file2 varchar(254),
-                    constraint post_member_writer_id_fk foreign key (writer_id) references member(id),
-                    constraint post_post_parent_id_fk foreign key (parent_id) references post(id),
+                    constraint post_member_writer_id_fk foreign key (writer_id) references member(id) on delete cascade ,
+                    constraint post_post_parent_id_fk foreign key (parent_id) references post(id) on delete cascade ,
                     unique(id,file1,file2)
                  );
 create table comment(
@@ -24,8 +24,8 @@ create table comment(
     content longtext,
     writer_id varchar(30),
     post_id integer,
-    constraint comment_member_writer_id_fk foreign key (writer_id) references member(id),
-    constraint comment_post_post_id_fk foreign key (post_id) references post(id)
+    constraint comment_member_writer_id_fk foreign key (writer_id) references member(id) on delete cascade ,
+    constraint comment_post_post_id_fk foreign key (post_id) references post(id) on delete cascade
 );
 
 ALTER TABLE post

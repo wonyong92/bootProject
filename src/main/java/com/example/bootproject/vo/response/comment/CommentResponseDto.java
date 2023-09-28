@@ -12,6 +12,6 @@ public class CommentResponseDto {
     String writerId;
 
     public CommentResponseDto(Comment ent) {
-        this(ent.getId(), ent.getContent(), ent.getWriterId());
+        this(ent.getId(), ent.getContent(), ent.getWriter().getId());
     }
 }

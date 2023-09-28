@@ -1,24 +1,31 @@
 package com.example.bootproject.entity.comment;
 
+import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.entity.post.Post;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "comment")
 @Data
+@NoArgsConstructor
 public class Comment {
 
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "post_id")
-    Post post;
+    private Post post;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
     @Column(name = "content", columnDefinition = "longtext")
     private String content;
-    @Column(name = "writer_id")
-    private String writerId;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private Member writer;
 }
+

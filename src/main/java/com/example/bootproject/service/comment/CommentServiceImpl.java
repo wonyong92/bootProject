@@ -4,6 +4,7 @@ package com.example.bootproject.service.comment;
 import com.example.bootproject.entity.comment.Comment;
 import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.repository.comment.CommentRepository;
+import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.repository.post.PostRepository;
 import com.example.bootproject.vo.request.comment.CommentCreateDto;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public List<Comment> getAllComments() {
@@ -33,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment createComment(CommentCreateDto dto, String writerId, Integer postId) {
         Comment comment = new Comment();
         comment.setContent(dto.getContent());
-        comment.setWriterId(writerId);
+        comment.setWriter(memberRepository.findById(writerId).get());
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
             return null;

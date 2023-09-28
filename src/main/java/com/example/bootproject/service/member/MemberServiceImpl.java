@@ -1,7 +1,9 @@
 package com.example.bootproject.service.member;
 
 import com.example.bootproject.entity.member.Member;
+import com.example.bootproject.repository.comment.CommentRepository;
 import com.example.bootproject.repository.member.MemberRepository;
+import com.example.bootproject.repository.post.PostRepository;
 import com.example.bootproject.vo.request.login.LoginRequestDto;
 import com.example.bootproject.vo.request.member.MemberCreateDto;
 import com.example.bootproject.vo.request.member.MemberUpdateDto;
@@ -12,13 +14,17 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public boolean memberCreate(MemberCreateDto dto) {
@@ -46,6 +52,26 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(id).orElse(null);
     }
 
+    //    @Override
+//    public boolean deleteMemberById(String id) {
+//        Member findMember = memberRepository.findById(id).orElse(null);
+//        log.info("delete found : {}", new SimpleMemberResponseDto(findMember));
+//        if (findMember != null) {
+//            // 먼저 관련된 포스트와 해당 포스트의 댓글 삭제
+//            findMember.getPosts().forEach(post -> {
+//                //post.setWriter(null);  // 부모 엔티티 참조 해제
+//                post.getComments().forEach(comment -> {
+//                    //commentRepository.save(comment);
+//                    commentRepository.delete(comment);
+//                });
+//                //postRepository.save(post);
+//                postRepository.delete(post);
+//            });
+//            //memberRepository.delete(findMember);
+//            return true;
+//        }
+//        return false;
+//    }
     @Override
     public boolean deleteMemberById(String id) {
         Member findMember = memberRepository.findById(id).orElse(null);
