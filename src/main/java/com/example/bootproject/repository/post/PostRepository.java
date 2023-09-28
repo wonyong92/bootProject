@@ -4,7 +4,6 @@ import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.vo.response.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -29,4 +28,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     Page<Post> findByWriterId(Pageable pageable,String writerId);
 
+    Optional<Post> findByIdAndWriterId(Integer postId,String writerId);
+
+    default boolean deleteByIdAndCheckSuc(Integer postId){
+        deleteById(postId);
+        return findById(postId).orElse(null)==null;
+    };
 }

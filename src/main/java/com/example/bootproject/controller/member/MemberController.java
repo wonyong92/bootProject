@@ -57,7 +57,6 @@ public class MemberController {
             result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append("\n"));
             throw new Exception(errorMessage.toString());
         }
-
         memberService.memberUpdate(dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
