@@ -21,8 +21,4 @@ public class Comment {
     private String content;
     @Column(name = "writer_id")
     private String writerId;
-
-    // Getter and Setter methods (omitted for brevity)
-
-    // Constructors (omitted for brevity)
 }

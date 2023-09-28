@@ -27,3 +27,6 @@ create table comment(
     constraint comment_member_writer_id_fk foreign key (writer_id) references member(id),
     constraint comment_post_post_id_fk foreign key (post_id) references post(id)
 );
+
+ALTER TABLE post
+    ADD FULLTEXT INDEX idx_fulltext_title (title);

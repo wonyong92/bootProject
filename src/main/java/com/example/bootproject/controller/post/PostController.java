@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static com.example.bootproject.system.util.BindingResultUtil.extracted;
 
@@ -145,6 +146,14 @@ public class PostController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(resource.getFilename().split("_|\\.")[0] + '.' + resource.getFilename().split("_|\\.")[2], StandardCharsets.UTF_8) + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<? extends Object> searchPostsByTitle(@RequestParam() String titleInput, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+        // Using the PostRepository to search for posts by title
+        Pageable pageable = PageRequest.of(page, size);  // 페이지당 10개씩 표시
+        Page<PostResponseDto> postList = postService.findByTitleContaining(titleInput,pageable);
+        return ResponseEntity.ok(postList);
     }
 
 }

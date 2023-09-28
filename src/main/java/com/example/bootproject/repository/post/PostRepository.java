@@ -5,6 +5,8 @@ import com.example.bootproject.vo.response.post.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -44,4 +46,14 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     }
 
     List<Post> findByParentId(Integer parentId);
+
+
+    default Page<PostResponseDto> titleSearch(String input, Pageable pageable) {
+        Page<Post> page = findPostsByTitle(input, pageable);
+        Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
+        return dtoPage;
+    }
+
+    @Query(value = "SELECT * FROM post WHERE MATCH(title) AGAINST(CONCAT('*', :input, '*') IN BOOLEAN MODE) ORDER BY MATCH(title) AGAINST(CONCAT('*', :input, '*') IN BOOLEAN MODE) DESC", nativeQuery = true)
+    Page<Post> findPostsByTitle(@Param("input") String input, Pageable pageable);
 }

@@ -189,4 +189,10 @@ public class PostServiceImpl implements PostService {
         });
         return result.get();
     }
+
+    @Override
+    public Page<PostResponseDto> findByTitleContaining(String titleInput,Pageable pageable) {
+        return postRepository.titleSearch(titleInput,pageable);
+
+    }
 }

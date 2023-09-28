@@ -26,4 +26,6 @@ public interface PostService {
     List<Post> getPostsByParentId(Integer parentId);
 
     Resource loadFileAsResource(Integer postId, int num) throws IOException;
+
+    Page<PostResponseDto> findByTitleContaining(String titleInput,Pageable pageable);
 }
