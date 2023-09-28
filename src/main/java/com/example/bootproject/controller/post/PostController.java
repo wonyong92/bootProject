@@ -62,7 +62,7 @@ public class PostController {
         return new ResponseEntity<>(new PostResponseDto(findPost), HttpStatus.OK);
     }
 
-    @GetMapping({"/",""})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
+    @GetMapping({""})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
     public ResponseEntity<? extends Object> listPosts(Model model, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "id,desc") String sort ) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sort.split(",")[1]), sort.split(",")[0]);  // 페이지당 10개씩 표시
         Page<PostResponseDto> postPage = postService.findAll(pageable);
@@ -70,4 +70,32 @@ public class PostController {
         return ResponseEntity.ok(postPage);
     }
 
+    @GetMapping({"/{memberId}"})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
+    public ResponseEntity<? extends Object> listPostsByMemberId(Model model, @RequestParam(defaultValue = "10") int size,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "id,desc") String sort ,@PathVariable(required = false) String memberId) {
+        if(memberId == null || memberId.trim()==""){
+            return ResponseEntity.noContent().build();
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sort.split(",")[1]), sort.split(",")[0]);  // 페이지당 10개씩 표시
+        Page<PostResponseDto> postPage = postService.findAllByMemberId(pageable,memberId);
+
+        return ResponseEntity.ok(postPage);
+    }
+
+    @PostMapping("/update/{postId}")
+    public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, @PathVariable Integer postId, HttpSession session) throws Exception {
+
+        if (result.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder("Validation errors:\n");
+            result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append("\n"));
+            throw new Exception(errorMessage.toString());
+        }
+
+        String id = (String) session.getAttribute("id");
+        if (id == null) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+        long createResult = postService.updatePost(dto, id,postId);
+        log.info("writer id {} updated post id : {}", id, createResult);
+        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.noContent().build();
+    }
 }

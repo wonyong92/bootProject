@@ -30,4 +30,9 @@ public class Post {
         this.content = content;
         this.writer = writer;
     }
+
+    public Post(Integer postId, String title, String content, Member member) {
+        this(title,content,member);
+        this.id=postId;
+    }
 }
