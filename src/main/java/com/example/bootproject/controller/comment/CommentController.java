@@ -54,7 +54,7 @@ public class CommentController {
         BindingResultUtil.extracted(bindingResult);
         String writerId = SessionUtil.getLoginId(session);
 
-        if (commentId == null || commentId < 1l || (commentService.updateComment(commentCreateDto, writerId, commentId)) == null) {
+        if (commentId == null || commentId < 1L || (commentService.updateComment(commentCreateDto, writerId, commentId)) == null) {
             return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>("Comment created successfully", HttpStatus.CREATED);
@@ -64,7 +64,7 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(@PathVariable("id") Long commentId, HttpSession session) {
         String writerId = SessionUtil.getLoginId(session);
 
-        if (commentId == null || commentId < 1l || !commentService.deleteComment(commentId,writerId)) {
+        if (commentId == null || commentId < 1L || !commentService.deleteComment(commentId, writerId)) {
             return ResponseEntity.badRequest().build();
         }
 

@@ -3,7 +3,6 @@ package com.example.bootproject.service.comment;
 import com.example.bootproject.entity.comment.Comment;
 import com.example.bootproject.vo.request.comment.CommentCreateDto;
 
-
 import java.util.List;
 
 public interface CommentService {
@@ -12,7 +11,7 @@ public interface CommentService {
 
     Comment getCommentById(Long id);
 
-    Comment createComment(CommentCreateDto comment, String writerId,Integer postId);
+    Comment createComment(CommentCreateDto comment, String writerId, Integer postId);
 
     Comment updateComment(CommentCreateDto dto, String writerId, Long id);
 

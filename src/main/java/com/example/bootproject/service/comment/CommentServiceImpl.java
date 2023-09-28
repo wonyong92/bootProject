@@ -30,13 +30,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment createComment(CommentCreateDto dto,String writerId,Integer postId) {
+    public Comment createComment(CommentCreateDto dto, String writerId, Integer postId) {
         Comment comment = new Comment();
         comment.setContent(dto.getContent());
         comment.setWriterId(writerId);
         Post post = postRepository.findById(postId).orElse(null);
-        if(post == null)
-        {
+        if (post == null) {
             return null;
         }
         comment.setPost(post);
@@ -45,8 +44,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment updateComment(CommentCreateDto dto, String writerId,Long id) {
-        Comment existingComment = commentRepository.findByIdAndWriterId(id,writerId).orElse(null);
+    public Comment updateComment(CommentCreateDto dto, String writerId, Long id) {
+        Comment existingComment = commentRepository.findByIdAndWriterId(id, writerId).orElse(null);
         if (existingComment != null) {
             existingComment.setContent(dto.getContent());
             return commentRepository.save(existingComment);
@@ -57,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public boolean deleteComment(Long id, String writerId) {
-        Comment existingComment = commentRepository.findByIdAndWriterId(id,writerId).orElse(null);
+        Comment existingComment = commentRepository.findByIdAndWriterId(id, writerId).orElse(null);
         if (existingComment != null) {
             commentRepository.delete(existingComment);
             return true;

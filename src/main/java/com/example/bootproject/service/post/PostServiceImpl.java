@@ -112,7 +112,7 @@ public class PostServiceImpl implements PostService {
             fileName = originalFileName;
         }
 
-        return fileName + "_" + uuid.toString() + extension;
+        return fileName + "_" + uuid + extension;
     }
 
     @Override
@@ -172,11 +172,11 @@ public class PostServiceImpl implements PostService {
     public Resource loadFileAsResource(Integer postId, int num) {
         String filePath = "uploads/";
         AtomicReference<Resource> result = new AtomicReference<>();
-        log.info("postId {} , num {}",postId,num);
+        log.info("postId {} , num {}", postId, num);
         postRepository.findById(postId).ifPresent(post -> {
             try {
                 Path filePathPath = Paths.get(filePath + (num == 1 ? post.getFile1() : post.getFile2())).normalize();
-                log.info("filePath {} ",filePath);
+                log.info("filePath {} ", filePath);
                 Resource resource = new UrlResource(filePathPath.toUri());
                 if (resource.exists()) {
                     result.set(resource);

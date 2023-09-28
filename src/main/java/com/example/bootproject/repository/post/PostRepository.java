@@ -15,10 +15,12 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Optional<Post> findById(Integer id);
 
     Page<Post> findAll(Pageable pageable);
+
     Page<Post> findByParentIdIsNull(Pageable pageable);
 
     Page<Post> findByWriterIdAndParentIdIsNull(String memberId, Pageable pageable);
-    Page<Post> findByWriterId(String memberId,Pageable pageable);
+
+    Page<Post> findByWriterId(String memberId, Pageable pageable);
 
     default Page<PostResponseDto> findAllDto(Pageable pageable) {
         Page<Post> page = findByParentIdIsNull(pageable);
@@ -27,7 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     }
 
     default Page<PostResponseDto> findAllDtoByMemberId(Pageable pageable, String memberId) {
-        Page<Post> page = findByWriterIdAndParentIdIsNull(memberId,pageable);
+        Page<Post> page = findByWriterIdAndParentIdIsNull(memberId, pageable);
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     }

@@ -5,6 +5,7 @@ import org.springframework.validation.BindingResult;
 public class BindingResultUtil {
     private BindingResultUtil() {
     }
+
     public static void extracted(BindingResult result) throws Exception {
         if (result.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder("Validation errors:\n");

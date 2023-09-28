@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebApplicationConfig  implements WebMvcConfigurer {
+public class WebApplicationConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -14,6 +14,6 @@ public class WebApplicationConfig  implements WebMvcConfigurer {
         //?: 한 문자와 일치
         //*: 모든 문자열과 일치
         //**: 모든 하위 경로를 포함하여 일치
-        registry.addInterceptor(new SessionInterceptor()).addPathPatterns("/*/create*/**","*/update*/**","*/delete*/**");
+        registry.addInterceptor(new SessionInterceptor()).addPathPatterns("/*/create*/**", "*/update*/**", "*/delete*/**");
     }
 }
