@@ -39,4 +39,21 @@ public class PostServiceImpl implements PostService {
     public Page<PostResponseDto> findAll(Pageable pageable) {
         return postRepository.findAllDto(pageable);
     }
+
+    @Override
+    public long updatePost(postCreateDto dto, String id, Integer postId) {
+        Member member = memberRepository.findById(id).get();
+        Post post = postRepository.findById(postId).get();
+        if (member != null && post !=null) {
+            Post entity = dto.dtoToEntity(member,postId);
+            postRepository.save(entity);
+            return entity.getId();
+        }
+        return -1;
+    }
+
+    @Override
+    public Page<PostResponseDto> findAllByMemberId(Pageable pageable, String memberId) {
+        return postRepository.findAllDtoByMemberId(pageable,memberId);
+    }
 }

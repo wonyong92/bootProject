@@ -13,4 +13,8 @@ public class postCreateDto {
     public Post dtoToEntity(Member member) {
         return new Post(title, content, member);
     }
+
+    public Post dtoToEntity(Member member,Integer postId) {
+        return new Post(postId,title, content, member);
+    }
 }

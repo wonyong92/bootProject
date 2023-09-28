@@ -12,4 +12,8 @@ public interface PostService {
     Post getPost(Integer postId);
 
     Page<PostResponseDto> findAll(Pageable pageable);
+
+    long updatePost(postCreateDto dto, String id,Integer postId);
+
+    Page<PostResponseDto> findAllByMemberId(Pageable pageable, String memberId);
 }

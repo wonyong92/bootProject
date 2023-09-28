@@ -21,4 +21,12 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     };
+    default Page<PostResponseDto> findAllDtoByMemberId(Pageable pageable,String memberId){
+        Page<Post> page = findByWriterId(pageable);
+        Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
+        return dtoPage;
+    }
+
+    Page<Post> findByWriterId(Pageable pageable);
+
 }
