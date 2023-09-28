@@ -16,4 +16,6 @@ public interface PostService {
     long updatePost(postCreateDto dto, String id,Integer postId);
 
     Page<PostResponseDto> findAllByMemberId(Pageable pageable, String memberId);
+
+    boolean deletePost(String id, Integer postId);
 }

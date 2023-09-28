@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/post")
@@ -97,5 +98,16 @@ public class PostController {
         long createResult = postService.updatePost(dto, id,postId);
         log.info("writer id {} updated post id : {}", id, createResult);
         return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/delete/{postId}")
+    public ResponseEntity<? extends Object> deletePost(@PathVariable Integer postId, HttpSession session) throws URISyntaxException {
+        String id = (String) session.getAttribute("id");
+        if (id == null) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+        boolean createResult = postService.deletePost(id,postId);
+        log.info("writer id {} updated post id : {}", id, createResult);
+        return createResult ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

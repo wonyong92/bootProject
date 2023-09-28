@@ -11,8 +11,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
@@ -20,7 +23,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public long createPost(postCreateDto dto, String id) {
-        Member member = memberRepository.findById(id).get();
+        Member member = memberRepository.findById(id).orElse(null);
         if (member != null) {
             Post entity = dto.dtoToEntity(member);
             postRepository.save(entity);
@@ -42,8 +45,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public long updatePost(postCreateDto dto, String id, Integer postId) {
-        Member member = memberRepository.findById(id).get();
-        Post post = postRepository.findById(postId).get();
+        Member member = memberRepository.findById(id).orElse(null);
+        Post post = postRepository.findByIdAndWriterId(postId,id).orElse(null);
         if (member != null && post !=null) {
             Post entity = dto.dtoToEntity(member,postId);
             postRepository.save(entity);
@@ -55,5 +58,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostResponseDto> findAllByMemberId(Pageable pageable, String memberId) {
         return postRepository.findAllDtoByMemberId(pageable,memberId);
+    }
+
+    @Override
+    public boolean deletePost(String id, Integer postId) {
+        Member member = memberRepository.findById(id).orElse(null);
+        Post post = postRepository.findByIdAndWriterId(postId,id).orElse(null);
+        if (member != null && post !=null) {
+            return postRepository.deleteByIdAndCheckSuc(postId);
+        }
+        return false;
     }
 }
