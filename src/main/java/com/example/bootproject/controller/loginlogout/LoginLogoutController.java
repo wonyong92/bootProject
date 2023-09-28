@@ -2,7 +2,7 @@ package com.example.bootproject.controller.loginlogout;
 
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.service.member.MemberService;
-import com.example.bootproject.vo.request.LoginRequestDto;
+import com.example.bootproject.vo.request.login.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class LoginLogoutController {
         Member findMember = memberService.doLogin(dto);
         if (findMember != null) {
             session.setAttribute("id", findMember.getId());
-            session.setAttribute("loginInfo", findMember);
+//            session.setAttribute("loginInfo", findMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);

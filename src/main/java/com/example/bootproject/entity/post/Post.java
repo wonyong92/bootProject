@@ -2,7 +2,6 @@ package com.example.bootproject.entity.post;
 
 import com.example.bootproject.entity.member.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,7 +31,7 @@ public class Post {
     }
 
     public Post(Integer postId, String title, String content, Member member) {
-        this(title,content,member);
-        this.id=postId;
+        this(title, content, member);
+        this.id = postId;
     }
 }

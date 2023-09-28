@@ -1,3 +1,4 @@
+drop table if exists comment;
 drop table if exists POST;
 drop table if exists Member;
 create table MEMBER(
@@ -11,5 +12,15 @@ create table POST(
                      title varchar(254),
                      content longtext,
                     writer_id varchar(30),
-                    foreign key (writer_id) references member(id)
+                    parent_id integer,
+                    constraint post_member_writer_id_fk foreign key (writer_id) references member(id),
+                    constraint post_post_parent_id_fk foreign key (parent_id) references post(id)
                  );
+create table comment(
+    id bigint auto_increment primary key ,
+    content longtext,
+    writer_id varchar(30),
+    post_id integer,
+    constraint comment_member_writer_id_fk foreign key (writer_id) references member(id),
+    constraint comment_post_post_id_fk foreign key (post_id) references post(id)
+);

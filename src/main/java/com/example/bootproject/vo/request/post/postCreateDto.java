@@ -1,4 +1,4 @@
-package com.example.bootproject.vo.request;
+package com.example.bootproject.vo.request.post;
 
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.entity.post.Post;
@@ -14,7 +14,7 @@ public class postCreateDto {
         return new Post(title, content, member);
     }
 
-    public Post dtoToEntity(Member member,Integer postId) {
-        return new Post(postId,title, content, member);
+    public Post dtoToEntity(Member member, Integer postId) {
+        return new Post(postId, title, content, member);
     }
 }

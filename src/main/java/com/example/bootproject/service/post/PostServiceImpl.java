@@ -4,8 +4,8 @@ import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.repository.post.PostRepository;
-import com.example.bootproject.vo.request.postCreateDto;
-import com.example.bootproject.vo.response.PostResponseDto;
+import com.example.bootproject.vo.request.post.postCreateDto;
+import com.example.bootproject.vo.response.post.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,9 +46,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public long updatePost(postCreateDto dto, String id, Integer postId) {
         Member member = memberRepository.findById(id).orElse(null);
-        Post post = postRepository.findByIdAndWriterId(postId,id).orElse(null);
-        if (member != null && post !=null) {
-            Post entity = dto.dtoToEntity(member,postId);
+        Post post = postRepository.findByIdAndWriterId(postId, id).orElse(null);
+        if (member != null && post != null) {
+            Post entity = dto.dtoToEntity(member, postId);
             postRepository.save(entity);
             return entity.getId();
         }
@@ -57,14 +57,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponseDto> findAllByMemberId(Pageable pageable, String memberId) {
-        return postRepository.findAllDtoByMemberId(pageable,memberId);
+        return postRepository.findAllDtoByMemberId(pageable, memberId);
     }
 
     @Override
     public boolean deletePost(String id, Integer postId) {
         Member member = memberRepository.findById(id).orElse(null);
-        Post post = postRepository.findByIdAndWriterId(postId,id).orElse(null);
-        if (member != null && post !=null) {
+        Post post = postRepository.findByIdAndWriterId(postId, id).orElse(null);
+        if (member != null && post != null) {
             return postRepository.deleteByIdAndCheckSuc(postId);
         }
         return false;

@@ -2,9 +2,9 @@ package com.example.bootproject.service.member;
 
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.repository.member.MemberRepository;
-import com.example.bootproject.vo.request.LoginRequestDto;
-import com.example.bootproject.vo.request.MemberCreateDto;
-import com.example.bootproject.vo.request.MemberUpdateDto;
+import com.example.bootproject.vo.request.login.LoginRequestDto;
+import com.example.bootproject.vo.request.member.MemberCreateDto;
+import com.example.bootproject.vo.request.member.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

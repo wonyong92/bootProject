@@ -1,4 +1,4 @@
-package com.example.bootproject.vo.request;
+package com.example.bootproject.vo.request.login;
 
 import lombok.Data;
 
