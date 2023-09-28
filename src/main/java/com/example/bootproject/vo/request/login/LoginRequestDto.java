@@ -1,4 +1,4 @@
-package com.example.bootproject.vo;
+package com.example.bootproject.vo.request.login;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Valid
-public class LoginDto {
+public class LoginRequestDto {
     @NotNull
     String Id;
     @NotNull

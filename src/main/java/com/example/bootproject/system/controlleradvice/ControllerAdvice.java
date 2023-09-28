@@ -13,6 +13,7 @@ public class ControllerAdvice {
     public ResponseEntity<String> handle404(NoHandlerFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Custom 404 - Page Not Found");
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         // 예외 처리 로직을 여기에 구현
