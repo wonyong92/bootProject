@@ -11,7 +11,7 @@ public class SimpleMemberResponseDto {
     String pwd;
 
     public SimpleMemberResponseDto(Member member) {
-        this.id = member.getId();
+        this.id = member.getMemberId();
         this.email = member.getEmail();
         this.pwd = member.getPwd();
         this.name = member.getName();

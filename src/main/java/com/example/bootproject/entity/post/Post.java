@@ -19,7 +19,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    Integer postId;
     String title;
     @Lob//text, clob, blob 과 같이 긴 문자열 데이터에 대해 String 맵핑 시 해당 어노테이션 필요
     String content;
@@ -34,25 +34,27 @@ public class Post {
     @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
 
     List<Comment> comments;
-
-    Integer parentId;
-
+    @OneToOne
+    @JoinColumn(name="parent_id")
+    Post parent;
+    Integer score;
     private String file1;
     private String file2;
 
-    public Post(String title, String content, Member member, Integer parentId) {
+    public Post(String title, String content, Member member, Post parent) {
         this.title = title;
         this.content = content;
         this.writer = member;
-        this.parentId = parentId;
+        this.parent = parent;
+        this.score = 0;
     }
 
-    public Post(Integer postId, String title, String content, Member member, Integer parentId) {
-        this.id = postId;
+    public Post(Integer postId, String title, String content, Member member, Post parent) {
+        this.postId = postId;
         this.title = title;
         this.content = content;
         this.writer = member;
-        this.parentId = parentId;
-
+        this.parent = parent;
+        this.score = 0;
     }
 }

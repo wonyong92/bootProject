@@ -85,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member doLogin(LoginRequestDto dto) {
-        Member findMember = memberRepository.findByIdAndPwd(dto.getId(), dto.getPwd());
+        Member findMember = memberRepository.findByMemberIdAndPwd(dto.getId(), dto.getPwd());
         return findMember;
     }
 

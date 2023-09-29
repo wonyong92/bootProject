@@ -24,7 +24,7 @@ public class LoginLogoutController {
     public ResponseEntity<Void> login(@ModelAttribute LoginRequestDto dto, HttpSession session) {
         Member findMember = memberService.doLogin(dto);
         if (findMember != null) {
-            session.setAttribute("id", findMember.getId());
+            session.setAttribute("id", findMember.getMemberId());
 //            session.setAttribute("loginInfo", findMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }

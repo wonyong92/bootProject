@@ -1,10 +1,13 @@
 package com.example.bootproject.controller.post;
 
 import com.example.bootproject.entity.post.Post;
+import com.example.bootproject.repository.post.PostRepository;
 import com.example.bootproject.service.post.PostService;
 import com.example.bootproject.system.util.SessionUtil;
 import com.example.bootproject.vo.request.post.postCreateDto;
 import com.example.bootproject.vo.response.post.PostResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -35,14 +38,16 @@ import static com.example.bootproject.system.util.BindingResultUtil.extracted;
 @RequestMapping("/post")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "게시글", description = "게시글 관련 api 입니다.")
 public class PostController {
 
     private final PostService postService;
 
-
+    @Operation(summary = "게시글 / 답글 생성 API", description = "post 생성 메서드")
     @PostMapping("/create")
     public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
         //질문글 생성 API 에 답글 데이터 요청 방지
+
         if (dto.getParentId() != null) {
             return ResponseEntity.badRequest().build();
         }
@@ -154,6 +159,12 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, size);  // 페이지당 10개씩 표시
         Page<PostResponseDto> postList = postService.findByTitleContaining(titleInput,pageable);
         return ResponseEntity.ok(postList);
+    }
+
+    private final PostRepository postRepository;
+    @GetMapping("/test")
+    public Object test(){
+        return postRepository.findByParentIsNull();
     }
 
 }

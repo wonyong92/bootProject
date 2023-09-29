@@ -14,38 +14,41 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    Optional<Post> findById(Integer id);
+    Optional<Post> findByPostId(Integer id);
 
     Page<Post> findAll(Pageable pageable);
 
-    Page<Post> findByParentIdIsNull(Pageable pageable);
+    List<Post> findByParent_PostId(Integer parentId);
 
-    Page<Post> findByWriterIdAndParentIdIsNull(String memberId, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.parent IS NULL")
+    Page<Post> findByParentIsNull(Pageable pageable);
 
-    Page<Post> findByWriterId(String memberId, Pageable pageable);
+    List<Post> findByParentIsNull();
+
+    Page<Post> findByWriter_MemberIdAndParentIsNull(String memberId, Pageable pageable);
+
+    Page<Post> findByWriter_MemberId(String memberId, Pageable pageable);
 
     default Page<PostResponseDto> findAllDto(Pageable pageable) {
-        Page<Post> page = findByParentIdIsNull(pageable);
+        Page<Post> page = findByParentIsNull(pageable);
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     }
 
     default Page<PostResponseDto> findAllDtoByMemberId(Pageable pageable, String memberId) {
-        Page<Post> page = findByWriterIdAndParentIdIsNull(memberId, pageable);
+        Page<Post> page = findByWriter_MemberIdAndParentIsNull(memberId, pageable);
         Page<PostResponseDto> dtoPage = page.map(content -> new PostResponseDto(content));
         return dtoPage;
     }
 
-    Page<Post> findByWriterId(Pageable pageable, String writerId);
+//    Page<Post> findByWriterId(Pageable pageable, String writerId);
 
-    Optional<Post> findByIdAndWriterId(Integer postId, String writerId);
+    Optional<Post> findByPostIdAndWriter_MemberId(Integer postId, String writerId);
 
     default boolean deleteByIdAndCheckSuc(Integer postId) {
         deleteById(postId);
         return findById(postId).orElse(null) == null;
     }
-
-    List<Post> findByParentId(Integer parentId);
 
 
     default Page<PostResponseDto> titleSearch(String input, Pageable pageable) {

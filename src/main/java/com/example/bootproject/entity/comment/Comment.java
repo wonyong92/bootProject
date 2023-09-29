@@ -20,12 +20,12 @@ public class Comment {
     private Post post;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long commentId;
     @Column(name = "content", columnDefinition = "longtext")
     private String content;
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", referencedColumnName = "member_id")
     private Member writer;
 }
 

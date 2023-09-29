@@ -2,7 +2,7 @@
 insert
 into
     member
-(email, name, pwd, id)
+(email, name, pwd, member_id)
 values
     ('email', 'name', 'pwd', 'id');;
 

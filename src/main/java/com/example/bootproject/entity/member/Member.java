@@ -12,7 +12,8 @@ import java.util.List;
 @Data
 public class Member {
     @Id
-    String id;
+    @Column(name = "member_id")
+    String memberId;
     String name;
     String email;
     String pwd;
@@ -32,8 +33,8 @@ public class Member {
 
     }
 
-    public Member(String id, String name, String email, String pwd) {
-        this.id = id;
+    public Member(String memberId, String name, String email, String pwd) {
+        this.memberId = memberId;
         this.name = name;
         this.email = email;
         this.pwd = pwd;

@@ -41,60 +41,74 @@ public class PostServiceImpl implements PostService {
     @Override
     public long createPost(postCreateDto dto, String id) {
         Member member = memberRepository.findById(id).orElse(null);
+        Post parent = null;
         if (member != null) {
             //답글에 다시 답글 생성 막기
             if (dto.getParentId() != null) {
-                Post parent = postRepository.findById(dto.getParentId()).orElse(null);
-                if (parent.getParentId() != null) {
+                parent = postRepository.findById(dto.getParentId()).orElse(null);
+                if (parent != null && parent.getParent() != null) {
                     return -1;
                 }
             }
-
+            log.info(new PostResponseDto(parent).toString());
             List<String> names;
             try {
+
                 names = uploadFile(dto.getFiles());
+
             } catch (IOException e) {
                 log.info("file upload fail {} ", e.getMessage());
                 return -1;
             }
+            log.info("ffff");
 
-            Post entity = dto.dtoToEntity(member);
-            entity.setFile1(names.get(0));
-            entity.setFile2(names.get(1));
+            Post entity = dto.dtoToEntity(member, parent);
+            try {
+                entity.setFile1(names.get(0));
+                entity.setFile2(names.get(1));
+            } catch (Exception e) {
+
+            }
             postRepository.save(entity);
-            return entity.getId();
+            return entity.getPostId();
         }
         return -1;
     }
 
     private List<String> uploadFile(List<MultipartFile> files) throws IOException {
+        log.info("dddddddddddddd1");
         List<String> names = new ArrayList<>();
-        // Normalize the file name
-        files.forEach(file -> {
-            String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-            // Generate a unique file name based on the current timestamp
-            String uniqueFileName = generateUniqueFileName(originalFileName);
+        if (files != null) {
+            // Normalize the file name
+            files.forEach(file -> {
+                if (file != null) {
+                    String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-            // Create the upload directory if it doesn't exist
-            Path directoryPath = Paths.get(uploadPath);
-            if (!Files.exists(directoryPath)) {
-                try {
-                    Files.createDirectories(directoryPath);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    // Generate a unique file name based on the current timestamp
+                    String uniqueFileName = generateUniqueFileName(originalFileName);
+
+                    // Create the upload directory if it doesn't exist
+                    Path directoryPath = Paths.get(uploadPath);
+                    if (!Files.exists(directoryPath)) {
+                        try {
+                            Files.createDirectories(directoryPath);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    // Copy the file to the target location with the unique file name
+                    Path targetLocation = Paths.get(uploadPath).resolve(uniqueFileName);
+                    try {
+                        Files.copy(file.getInputStream(), targetLocation);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    names.add(uniqueFileName);
                 }
-            }
-
-            // Copy the file to the target location with the unique file name
-            Path targetLocation = Paths.get(uploadPath).resolve(uniqueFileName);
-            try {
-                Files.copy(file.getInputStream(), targetLocation);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            names.add(uniqueFileName);
-        });
+            });
+        }
         return names;
     }
 
@@ -128,7 +142,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public long updatePost(postCreateDto dto, String id, Integer postId) {
         Member member = memberRepository.findById(id).orElse(null);
-        Post post = postRepository.findByIdAndWriterId(postId, id).orElse(null);
+        Post post = postRepository.findByPostIdAndWriter_MemberId(postId, id).orElse(null);
+
         if (member != null && post != null) {
 
             List<String> names;
@@ -139,12 +154,13 @@ public class PostServiceImpl implements PostService {
                 return -1;
             }
 
-            Post entity = dto.dtoToEntity(member, postId);
+            Post entity = dto.dtoToEntity(member, post.getParent());
+            entity.setScore(post.getScore());
             entity.setFile1(names.get(0));
             entity.setFile2(names.get(1));
 
             postRepository.save(entity);
-            return entity.getId();
+            return entity.getPostId();
         }
         return -1;
     }
@@ -157,7 +173,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean deletePost(String id, Integer postId) {
         Member member = memberRepository.findById(id).orElse(null);
-        Post post = postRepository.findByIdAndWriterId(postId, id).orElse(null);
+        Post post = postRepository.findByPostIdAndWriter_MemberId(postId, id).orElse(null);
         if (member != null && post != null) {
             return postRepository.deleteByIdAndCheckSuc(postId);
         }
@@ -166,7 +182,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getPostsByParentId(Integer parentId) {
-        return postRepository.findByParentId(parentId);
+        return postRepository.findByParent_PostId(parentId);
     }
 
     public Resource loadFileAsResource(Integer postId, int num) {
@@ -191,8 +207,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostResponseDto> findByTitleContaining(String titleInput,Pageable pageable) {
-        return postRepository.titleSearch(titleInput,pageable);
+    public Page<PostResponseDto> findByTitleContaining(String titleInput, Pageable pageable) {
+        return postRepository.titleSearch(titleInput, pageable);
 
     }
 }

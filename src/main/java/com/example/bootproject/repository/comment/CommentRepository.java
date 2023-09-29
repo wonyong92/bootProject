@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByPostId(Integer postId);
+    List<Comment> findByPostPostId(Integer postId);
 
-    List<Comment> findByWriterId(String writerId);
+    List<Comment> findByWriterMemberId(String writerId);
 
-    Optional<Comment> findByIdAndWriterId(Long id, String writerId);
+    Optional<Comment> findByCommentIdAndWriter_MemberId(Long postId, String writerId);
 }
 

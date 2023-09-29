@@ -5,15 +5,17 @@ import lombok.Data;
 
 @Data
 public class PostResponseDto {
-    Integer id;
+    Integer postId;
     String title;
     String content;
     String writerId;
+    Integer score;
 
     public PostResponseDto(Post post) {
-        this.id = post.getId();
+        this.postId = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.writerId = post.getWriter().getId();
+        this.writerId = post.getWriter().getMemberId();
+        this.score=post.getScore();
     }
 }
