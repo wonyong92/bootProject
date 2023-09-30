@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="headerFragment">
-<head>
-    <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-      <html lang="en" xmlns:th="http://www.thymeleaf.org">
-      <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Header</title>
-  <link rel="stylesheet" href="/static/css/header.css" th:href="@{/static/css/header.css}">
+    <head>
+        <meta charset="UTF-8">
+        <title>Header</title>
+        <link rel="stylesheet" href="/static/css/header.css" th:href="@{/static/css/header.css}">
+        <style>
+            .id-display {
+                font-size: 20px;
+            }
+        </style>
+        <div class="background-container">
+            <div class="container">
+                <a th:href="@{/main}">
+                    <img src="/static/img/logo.png" alt="Logo" class="logo">
+                </a>
+                <div class="search-container">
+                    <div class="left-icon">
+                        <img src="/static/img/search_icon.png" alt="Search Icon">
+                    </div>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search...">
+                    <button class="search-button" onclick="search()">Search</button>
+                </div>
+                <div class="button-container">
+                    <th:block th:if="${#httpSession != null}">
+                    <span class="id-display" th:if="${#httpServletRequest.getSession(false) != null}">
+                    <a th:href="'/member/profile?id=' + ${#httpServletRequest.getSession().getAttribute('id')}">
+                        <span th:text="${#httpServletRequest.getSession().getAttribute('id')}"></span>
+                    </a>
+                        &nbsp;&nbsp;
+                     <button class="logout-button" onclick="logout()">Logout</button>
+                    </span>
 
-
-  <div class="background-container">
-    <div class="container">
-      <a th:href="@{/main}">
-        <img src="/static/img/logo.png" alt="Logo" class="logo">
-      </a>
-      <div class="search-container">
-        <div class="left-icon">
-          <img src="/static/img/search_icon.png" alt="Search Icon">
+                    </th:block>
+                    <a th:if="${#httpSession == null}" th:href="@{/login}">
+                        <button class="login-button">Login</button>
+                    </a>
+                    <button class="signup-button"
+                            th:unless="${#httpSession != null and #httpSession.getAttribute('id') != null}">Signup
+                    </button>
+                </div>
+            </div>
         </div>
-        <input type="text" id="search-input" class="search-input" placeholder="Search...">
-        <button class="search-button" onclick="search()">Search</button>
-      </div>
-      <div class="button-container">
-        <button class="login-button">Login</button>
-        <button class="signup-button">Signup</button>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    function search() {
-      const searchText = document.getElementById('search-input').value;
-      const encodedSearchText = encodeURIComponent(searchText);
-      window.location.href = 'http://localhost:8080/search?title=' + encodedSearchText;
-    }
-  </script>
+        <script>
+            function search() {
+                const searchText = document.getElementById('search-input').value;
+                const encodedSearchText = encodeURIComponent(searchText);
 
-</head>
-<body></body>
+                fetch('http://localhost:8080/post/search?title=' + encodedSearchText)
+                    .then(response => response.json())
+                    .then(data => {
+                        const posts = extractPosts(data);
+                        renderPosts(posts);
+                        console.log(data);
+                        const totalPages = data.totalPages;
+                        renderPagination(totalPages, data.number);
+                        updateAllQuestionsText(data.totalElements);
+                    })
+                    .catch(error => console.error('Error searching:', error));
+            }
+
+            function logout() {
+                fetch('http://localhost:8080/logout', {
+                    method: 'GET'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = 'http://localhost:8080/main';
+                        } else {
+                            console.error('Logout failed.');
+                        }
+                    })
+                    .catch(error => console.error('Error during logout:', error));
+            }
+        </script>
+    </head>
 </th:block>
-</html>
-</title>
-</head>
 <body>
-
 </body>
+
 </html>

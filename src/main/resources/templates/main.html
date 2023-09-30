@@ -1,6 +1,209 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout">
+<head>
+
+    <style th:fragment="content">
+        /* CSS styles */
+        .main_container {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 10px;
+            background-color: white;
+        }
+
+        .question-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .question-card p {
+            margin-top: 0;
+        }
+
+        .tag-section {
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+        .card-writer {
+            text-align: right;
+        }
+
+        .card-title {
+            color: blue;
+        }
+
+        /* Rest of your styles */
+    </style>
+</head>
 <th:block layout:fragment="content">
- main
+    <body>
+    <!-- Your content -->
+    <div class="main_container">
+        <div class="header-section">
+            All Questions
+        </div>
+        <div class="card-section">
+        </div>
+        <div class="pagination">
+        </div>
+    </div>
+    </body>
+
+    <script>
+        function extractPosts(response) {
+            return response.content || [];
+        }
+
+        // Function to create post HTML
+        function createPostHTML(post) {
+            return `
+        <div class="question-card">
+            <h3 class="card-title"><a href="#" style="color: blue;" onclick="redirectToPost(${post.postId})">${post.title}</a></h3>
+            <p class="card-content">${post.content}</p>
+            <p class="card-writer">${post.writerId}</p>
+
+            <div class="tag-section">
+
+            </div>
+        </div>
+    `;
+        }
+
+        function redirectToPost(postId) {
+            window.location.href = `http://localhost:8080/post/read/${postId}`;
+        }
+
+        function updateAllQuestionsText(numberOfElements) {
+            const headerSection = document.querySelector('.header-section');
+            headerSection.innerText = `All Questions: ${numberOfElements}`;
+        }
+
+        // Function to render posts
+        function renderPosts(posts) {
+            const container = document.querySelector('.card-section');
+            container.innerHTML = '';  // Clear the existing content
+
+            posts.forEach(post => {
+                const postHTML = createPostHTML(post);
+                container.innerHTML += postHTML;
+            });
+        }
+
+        // Function to fetch posts via AJAX
+        function fetchPosts(page = 0) {
+            const pageSize = 10;  // Assuming 10 posts per page
+            fetch('http://localhost:8080/post?page=' + page)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        const posts = extractPosts(data);
+                        renderPosts(posts);
+                        console.log(data);
+                        const totalPages = data.totalPages;
+                        renderPagination(totalPages, data.number);
+                        updateAllQuestionsText(data.totalElements);
+                    } else {
+                        console.log('No posts available.');
+                    }
+                })
+                .catch(error => console.error('Error fetching posts:', error));
+        }
+
+        // Load posts on page load
+        fetchPosts();
+
+        function renderPagination(totalPages, currentPage) {
+            const paginationContainer = document.querySelector('.pagination');
+            paginationContainer.innerHTML = '';  // Clear the existing content
+            console.log(`current ${currentPage}`);
+
+            // Create "Previous" button
+            if (currentPage > 0) {
+                const prevButton = document.createElement('a');
+                prevButton.href = '#';
+                prevButton.innerText = '<<';
+                prevButton.addEventListener('click', () => {
+                    fetchPosts(currentPage - 1); // 다음 페이지 데이터 가져오기
+                });
+                paginationContainer.appendChild(prevButton);
+            }
+
+
+            // Create page number buttons
+         for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('a');
+          pageButton.href = '#';
+          pageButton.innerText = i;
+          (function(pageNumber) {
+           pageButton.addEventListener('click', () => {
+            fetchPosts(pageNumber-1);
+           });
+          })(i);
+
+          if (i === currentPage + 1) {
+           pageButton.classList.add('active');
+          }
+
+          paginationContainer.appendChild(pageButton);
+         }
+
+            if (currentPage+1 < totalPages) {
+                // Create "Next" button
+                const nextButton = document.createElement('a');
+                nextButton.href = '#';
+                nextButton.innerText = '>>';
+                nextButton.addEventListener('click', () => {
+                    fetchPosts(currentPage + 1); // 다음 페이지 데이터 가져오기
+                });
+                paginationContainer.appendChild(nextButton);
+            }
+        }
+    </script>
 </th:block>
 </html>

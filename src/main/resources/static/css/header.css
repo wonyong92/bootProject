@@ -63,7 +63,7 @@ body {
     margin-left: 30px;
 }
 
-.login-button, .signup-button {
+.login-button, .signup-button,.logout-button {
     height: 30px;
     margin-right: 10px;
     padding: 0 10px;

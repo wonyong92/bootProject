@@ -26,9 +26,9 @@ public class LoginLogoutController {
         log.info("login Request {} ",dto);
         if (findMember != null) {
             session.setAttribute("id", findMember.getMemberId());
-//            session.setAttribute("loginInfo", findMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 

@@ -40,6 +40,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public long createPost(postCreateDto dto, String id) {
+        log.info("ffff");
         Member member = memberRepository.findById(id).orElse(null);
         Post parent = null;
         if (member != null) {
@@ -50,7 +51,7 @@ public class PostServiceImpl implements PostService {
                     return -1;
                 }
             }
-            log.info(new PostResponseDto(parent).toString());
+//            log.info(new PostResponseDto(parent).toString());
             List<String> names;
             try {
 
@@ -60,7 +61,7 @@ public class PostServiceImpl implements PostService {
                 log.info("file upload fail {} ", e.getMessage());
                 return -1;
             }
-            log.info("ffff");
+
 
             Post entity = dto.dtoToEntity(member, parent);
             try {

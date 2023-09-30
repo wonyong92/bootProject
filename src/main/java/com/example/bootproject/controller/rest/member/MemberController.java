@@ -33,7 +33,7 @@ public class MemberController {
         return ResponseEntity.ok(Map.of("test", "test"));
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/sign-up")
     public ResponseEntity<Void> createMember(@ModelAttribute @Valid MemberCreateDto dto, BindingResult result) throws Exception {
         log.info("member create request");
         log.info("body : {}", dto);
