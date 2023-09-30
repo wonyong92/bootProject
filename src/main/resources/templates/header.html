@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="headerFragment">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="en" xmlns:th="http://www.thymeleaf.org">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Header</title>
+  <link rel="stylesheet" href="/static/css/header.css" th:href="@{/static/css/header.css}">
+
+
+  <div class="background-container">
+    <div class="container">
+      <a th:href="@{/main}">
+        <img src="/static/img/logo.png" alt="Logo" class="logo">
+      </a>
+      <div class="search-container">
+        <div class="left-icon">
+          <img src="/static/img/search_icon.png" alt="Search Icon">
+        </div>
+        <input type="text" id="search-input" class="search-input" placeholder="Search...">
+        <button class="search-button" onclick="search()">Search</button>
+      </div>
+      <div class="button-container">
+        <button class="login-button">Login</button>
+        <button class="signup-button">Signup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function search() {
+      const searchText = document.getElementById('search-input').value;
+      const encodedSearchText = encodeURIComponent(searchText);
+      window.location.href = 'http://localhost:8080/search?title=' + encodedSearchText;
+    }
+  </script>
+
+</head>
+<body></body>
+</th:block>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/login.css" th:href="@{/static/css/login.css}">
+</head>
+<body>
+<div class="container">
+    <img src="/static/img/logo.png" alt="Stack Overflow Logo" style="width: 100px; height: auto;" />
+    <h2>Login</h2>
+    <form action="/login" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <div class="error" id="usernameError"></div>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <div class="error" id="passwordError"></div>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <script>
+        function sendLoginRequest(username, password) {
+            const data = {
+                id: username,
+                pwd: password
+            };
+
+            fetch('http://localhost:8080/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        alert('안녕하세요 '+username +' 님');
+                        window.location.href = 'http://localhost:8080/main';
+                    } else if (response.status === 403) {
+                        throw new Error('login fail');
+                    } else {
+                        throw new Error('An error occurred');
+                    }
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            sendLoginRequest(username, password);
+        });
+    </script>
+
+</div>
+</body>
+</html>

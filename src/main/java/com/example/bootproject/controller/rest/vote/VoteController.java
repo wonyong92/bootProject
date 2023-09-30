@@ -1,4 +1,4 @@
-package com.example.bootproject.controller.vote;
+package com.example.bootproject.controller.rest.vote;
 
 import com.example.bootproject.service.vote.PostVoteService;
 import com.example.bootproject.system.util.SessionUtil;

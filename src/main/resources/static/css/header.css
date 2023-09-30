@@ -1,0 +1,79 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Background color similar to Stack Overflow */
+}
+
+.background-container {
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 2px 4px rgba(36, 39, 41, 0.1);
+    height: 60px;
+}
+
+.container {
+    max-width: 1700px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    height: 100%;
+}
+
+.logo {
+    width: 130px;
+    height: 40px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    flex: 1;
+}
+
+.left-icon img {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+}
+
+.search-input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #d6d9dc;
+    padding: 6px;
+    border-radius: 5px;
+}
+
+.search-button {
+    height: 38px;
+    background-color: #0077cc; /* Stack Overflow's primary blue color */
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.button-container {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.login-button, .signup-button {
+    height: 30px;
+    margin-right: 10px;
+    padding: 0 10px;
+    background-color: #0077cc; /* Stack Overflow's primary blue color */
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover, .signup-button:hover {
+    background-color: #005ea6; /* Darker blue on hover */
+}

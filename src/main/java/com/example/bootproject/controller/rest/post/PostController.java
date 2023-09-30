@@ -1,4 +1,4 @@
-package com.example.bootproject.controller.post;
+package com.example.bootproject.controller.rest.post;
 
 import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.repository.post.PostRepository;
@@ -154,7 +154,7 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<? extends Object> searchPostsByTitle(@RequestParam() String titleInput, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<? extends Object> searchPostsByTitle(@RequestParam("title") String titleInput, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         // Using the PostRepository to search for posts by title
         Pageable pageable = PageRequest.of(page, size);  // 페이지당 10개씩 표시
         Page<PostResponseDto> postList = postService.findByTitleContaining(titleInput,pageable);

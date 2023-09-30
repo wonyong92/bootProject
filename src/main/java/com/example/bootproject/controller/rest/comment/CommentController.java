@@ -1,4 +1,4 @@
-package com.example.bootproject.controller.comment;
+package com.example.bootproject.controller.rest.comment;
 
 import com.example.bootproject.entity.comment.Comment;
 import com.example.bootproject.service.comment.CommentService;

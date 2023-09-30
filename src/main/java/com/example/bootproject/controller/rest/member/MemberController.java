@@ -1,4 +1,4 @@
-package com.example.bootproject.controller.member;
+package com.example.bootproject.controller.rest.member;
 
 import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.repository.member.MemberRepository;
