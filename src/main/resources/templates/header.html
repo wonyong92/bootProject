@@ -55,7 +55,7 @@
                         renderPosts(posts);
                         console.log(data);
                         const totalPages = data.totalPages;
-                        renderPagination(totalPages, data.number);
+                        renderPagination(totalPages, data.number, encodedSearchText);
                         updateAllQuestionsText(data.totalElements);
                     })
                     .catch(error => console.error('Error searching:', error));

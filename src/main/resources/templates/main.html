@@ -136,9 +136,11 @@
         }
 
         // Function to fetch posts via AJAX
-        function fetchPosts(page = 0) {
+        function fetchPosts(page = 0,search = '') {
             const pageSize = 10;  // Assuming 10 posts per page
-            fetch('http://localhost:8080/post?page=' + page)
+            console.log(`search ${search}`);
+            const requestUri = search ?`http://localhost:8080/post/search?page=${page}&title=${search}`:'http://localhost:8080/post?page=' + page;
+            fetch(requestUri)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
@@ -158,7 +160,7 @@
         // Load posts on page load
         fetchPosts();
 
-        function renderPagination(totalPages, currentPage) {
+        function renderPagination(totalPages, currentPage,encodedSearchText) {
             const paginationContainer = document.querySelector('.pagination');
             paginationContainer.innerHTML = '';  // Clear the existing content
             console.log(`current ${currentPage}`);
@@ -169,7 +171,7 @@
                 prevButton.href = '#';
                 prevButton.innerText = '<<';
                 prevButton.addEventListener('click', () => {
-                    fetchPosts(currentPage - 1); // 다음 페이지 데이터 가져오기
+                    fetchPosts(currentPage - 1,encodedSearchText); // 다음 페이지 데이터 가져오기
                 });
                 paginationContainer.appendChild(prevButton);
             }
@@ -182,7 +184,7 @@
           pageButton.innerText = i;
           (function(pageNumber) {
            pageButton.addEventListener('click', () => {
-            fetchPosts(pageNumber-1);
+            fetchPosts(pageNumber-1,encodedSearchText);
            });
           })(i);
 
@@ -199,7 +201,7 @@
                 nextButton.href = '#';
                 nextButton.innerText = '>>';
                 nextButton.addEventListener('click', () => {
-                    fetchPosts(currentPage + 1); // 다음 페이지 데이터 가져오기
+                    fetchPosts(currentPage + 1,encodedSearchText); // 다음 페이지 데이터 가져오기
                 });
                 paginationContainer.appendChild(nextButton);
             }
