@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +19,15 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
 
-@RestController
+@Controller
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
-
     @GetMapping("/test")
+    @ResponseBody
     public ResponseEntity<Map<String, String>> testHandler(HttpSession session) {
         log.info("test controller");
         log.info(memberRepository.findAll().toString());
@@ -34,6 +36,7 @@ public class MemberController {
     }
 
     @PostMapping("/sign-up")
+    @ResponseBody
     public ResponseEntity<Void> createMember(@ModelAttribute @Valid MemberCreateDto dto, BindingResult result) throws Exception {
         log.info("member create request");
         log.info("body : {}", dto);
@@ -49,6 +52,7 @@ public class MemberController {
     }
 
     @PostMapping("/update")
+    @ResponseBody
     public ResponseEntity<Void> updateMember(@ModelAttribute MemberUpdateDto dto, BindingResult result, HttpSession session) throws Exception {
         log.info("member update request");
         log.info("body : {}", dto);
@@ -62,12 +66,20 @@ public class MemberController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<SimpleMemberResponseDto> readMember(@RequestParam String id) {
-        Member member = memberService.getMemberById(id);
-        return new ResponseEntity<>(new SimpleMemberResponseDto(member), HttpStatus.OK);
+    public String readMember(HttpSession session, Model model) {
+        if(session!=null){
+            String id = (String)session.getAttribute("id");
+            Member member = memberService.getMemberById(id);
+            log.info("{}",new SimpleMemberResponseDto(member));
+            model.addAttribute("member",new SimpleMemberResponseDto(member));
+            return "profile";
+        }
+        return "main";
+
     }
 
     @GetMapping("/delete")
+    @ResponseBody
     public ResponseEntity<Void> deleteMember(@RequestParam String id) {
         boolean result = memberService.deleteMemberById(id);
         return result ? new ResponseEntity<>(HttpStatus.OK) : ResponseEntity.status(HttpStatus.FORBIDDEN).build();

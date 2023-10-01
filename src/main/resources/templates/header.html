@@ -10,6 +10,7 @@
                 font-size: 20px;
             }
         </style>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <div class="background-container">
             <div class="container">
                 <a th:href="@{/main}">
@@ -23,21 +24,24 @@
                     <button class="search-button" onclick="search()">Search</button>
                 </div>
                 <div class="button-container">
-                    <th:block th:if="${#httpSession != null}">
-                    <span class="id-display" th:if="${#httpServletRequest.getSession(false) != null}">
-                    <a th:href="'/member/profile?id=' + ${#httpServletRequest.getSession().getAttribute('id')}">
-                        <span th:text="${#httpServletRequest.getSession().getAttribute('id')}"></span>
-                    </a>
-                        &nbsp;&nbsp;
-                     <button class="logout-button" onclick="logout()">Logout</button>
-                    </span>
+                    <span class="id-display" >
+                        <span th:if="${#httpServletRequest.getSession().getAttribute('id') != null}">
+                            <a th:href="'/member/profile'">
+                                <span id=memberId th:text="${#httpServletRequest.getSession().getAttribute('id')}"></span>
+                            </a>
+                            &nbsp;&nbsp;
+                            <button class="logout-button" onclick="logout()">Logout</button>
+                        </span>
+                        <span th:if="${#httpServletRequest.getSession().getAttribute('id') == null}">
+                            <a th:href="@{/login}">
+                                <button class="login-button">Login</button>
+                            </a>
+                        </span>
+                </span>
 
-                    </th:block>
-                    <a th:if="${#httpSession == null}" th:href="@{/login}">
-                        <button class="login-button">Login</button>
-                    </a>
                     <button class="signup-button"
-                            th:unless="${#httpSession != null and #httpSession.getAttribute('id') != null}">Signup
+                        th:if="${#httpServletRequest.getSession().getAttribute('id') == null}">
+                        Signup
                     </button>
                 </div>
             </div>
@@ -61,18 +65,35 @@
                     .catch(error => console.error('Error searching:', error));
             }
 
+            // function logout() {
+            //     fetch('http://localhost:8080/logout', {
+            //         method: 'GET'
+            //     })
+            //         .then(response => {
+            //             if (response.ok) {
+            //                 window.location.href = 'http://localhost:8080/main';
+            //             } else {
+            //                 console.error('Logout failed.');
+            //             }
+            //         })
+            //         .catch(error => console.error('Error during logout:', error));
+            // }
             function logout() {
-                fetch('http://localhost:8080/logout', {
-                    method: 'GET'
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = 'http://localhost:8080/main';
-                        } else {
-                            console.error('Logout failed.');
-                        }
-                    })
-                    .catch(error => console.error('Error during logout:', error));
+                console.log("logout button!");
+                const memberId = document.getElementById('memberId').innerText;
+
+                $.ajax({
+                    type: "GET",  // Change this to the appropriate HTTP method
+                    url: "/logout",  // Adjust the URL for your logout endpoint
+                    success: function(response) {
+                        alert('안녕히 가세요 ' + memberId + '님');
+                        window.location.href = '/main';
+                    },
+                    error: function() {
+                        alert('로그아웃 요청 실패');
+                        window.location.href = '/main';
+                    }
+                });
             }
         </script>
     </head>

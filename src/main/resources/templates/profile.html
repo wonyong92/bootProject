@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .profile-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            margin: auto;
+        }
+        .profile-info {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .profile-info strong {
+            margin-right: 10px;
+        }
+        .logout-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-button:hover {
+            background-color: #f44336;
+        }
+        .logo {
+            width: 100px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            display: block;
+            margin: 0 auto; /* Center the image */
+        }
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .logo a:hover {
+            text-decoration: underline;
+        }
+        #profileLogo{
+            width:200px;
+        }
+        .nickname-update {
+            display: none;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+
+        .nickname-update-toggle-button{
+            height: 30px;
+            margin-right: 10px;
+            padding: 0 10px;
+            background-color: #0077cc; /* Stack Overflow's primary blue color */
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .nickname-update {
+            display: none; /* Initially hidden */
+            position: fixed; /* Fixed position */
+            top: 50%; /* Adjust top position */
+            left: 50%; /* Adjust left position */
+            transform: translate(-50%, -50%); /* Center horizontally and vertically */
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Logo and Main Page Link -->
+<div style="text-align: center;">
+    <a href="/main">
+        <img id=profileLogo src="/static/img/logo.png" alt="Logo">
+
+    </a>
+
+</div>
+
+<!-- Profile Info -->
+<div class="profile-container">
+    <h1>User Profile</h1>
+
+    <div class="profile-info">
+        <strong>ID:</strong>
+        <span id=memberId th:text="${member.id}"></span>
+    </div>
+    <div class="profile-info">
+        <strong>Name:</strong>
+        <div th:text="${member.name}"></div>
+        <div style="text-align: center; ">
+            <button class="nickname-update-toggle-button" onclick="toggleNicknameUpdate()">Edit</button>
+        </div>
+
+        <!-- Nickname Update Section -->
+        <div class="nickname-update">
+            <h2>Nickname Update</h2>
+            <div style="margin-bottom: 10px;">
+                <label for="newNickname">New Nickname:</label>
+                <input type="text" id="newNickname" placeholder="Enter new nickname">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>Current Nickname:</strong>
+                <span th:text="${member.name}"></span>
+            </div>
+            <button class="nickname-update-toggle-button" onclick="updateNickname()">Update Nickname</button>
+        </div>
+    </div>
+
+
+
+    <div class="profile-info">
+        <strong>Email:</strong>
+        <span th:text="${member.email}"></span>
+    </div>
+</div>
+
+<!-- Logout Button -->
+<div style="text-align: center; margin-top: 20px;">
+    <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+
+<script>
+    function logout() {
+        console.log("logout button!");
+        const memberId = document.getElementById('memberId').innerText;
+
+        $.ajax({
+            type: "GET",  // Change this to the appropriate HTTP method
+            url: "/logout",  // Adjust the URL for your logout endpoint
+            success: function(response) {
+                alert('안녕히 가세요 ' + memberId + '님');
+                window.location.href = '/main';
+            },
+            error: function() {
+                alert('로그아웃 요청 실패');
+            }
+        });
+    }
+
+    function updateNickname() {
+        const newNickname = document.getElementById('newNickname').value;
+        const currentNickname = document.querySelector('.profile-info div').innerText.trim(); // Get current nickname
+
+        if (newNickname.trim() === currentNickname) {
+            alert('Please enter a different nickname.'); // Alert if the new nickname is the same as the current nickname
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/member/update",
+            data: {
+                id: null,
+                name: newNickname,
+                pwd: null
+            },
+            success: function (response) {
+                alert('Nickname updated successfully!');
+                window.location.reload();
+            },
+            error: function () {
+                alert('Failed to update nickname.');
+            }
+        });
+    }
+
+
+        function toggleNicknameUpdate() {
+        const nicknameUpdateSection = document.querySelector('.nickname-update');
+        if (nicknameUpdateSection.style.display === 'none') {
+            nicknameUpdateSection.style.display = 'block';
+        } else {
+            nicknameUpdateSection.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
