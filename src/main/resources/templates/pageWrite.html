@@ -96,7 +96,7 @@
     </div>
 
     <span id="edit" th:text="${edit}"></span>
-    <span id="postId" th:text="${post.postId}"></span>
+    <span id="postId" th:text="${edit} ? ${post.postId}"></span>
 
 <form class = "postForm" th:action="${edit} ? '/post/update/'+${post.postId} : '/post/create'" method="post" enctype="multipart/form-data">
     <h1 th:text="${edit} ? 'Edit Post' : 'Create a Post'"></h1>
@@ -129,7 +129,7 @@
     function cancel() {
         window.location.href = '/main';
     }
-    const postId = document.getElementById("postId").textContent;
+    let postId = document.getElementById("postId").textContent;
     function handleFormSubmission() {
         console.log("ddddd");
         $.ajax({
@@ -141,8 +141,13 @@
             success: function(response) {
                 let successMessage = ($('#edit').text().trim() === 'true') ? 'Edit' : 'Create';
                 successMessage += ' 성공했습니다.';
-                alert('Post ' + successMessage);
-                window.location.href = `/post/read/${postId}`;
+                alert('Post ' + successMessage+' '+response);
+                if(postId===null || postId.trim()===''){
+                    window.location.href = `/post/read/${response}`;
+                }
+                else{
+                    window.location.href = `/post/read/${postId}`;
+                }
             },
             error: function(xhr, status, error) {
                 console.log('Error:', error);  // 에러를 로그로 기록
