@@ -61,7 +61,7 @@ public class PostController {
 
         long createResult = postService.createPost(dto, id);
         log.info("writer id {} created id : {}", id, createResult);
-        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.badRequest().build();
+        return createResult != -1 ? ResponseEntity.ok(createResult) : ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/read/{postId}")
@@ -112,7 +112,7 @@ public class PostController {
 
         long createResult = postService.updatePost(dto, id, postId);
         log.info("writer id {} updated post id : {}", id, createResult);
-        return createResult != -1 ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+        return createResult != -1 ? ResponseEntity.ok(createResult) : ResponseEntity.noContent().build();
     }
 
     @GetMapping("/delete/{postId}")
@@ -195,7 +195,7 @@ public class PostController {
     }
 
     @GetMapping("/create")
-    public String createPostView(Model model, @PathVariable Integer postId, HttpSession session) throws Exception {
+    public String createPostView(Model model,HttpSession session) throws Exception {
         model.addAttribute("edit", false);
         return "pageWrite";
     }
