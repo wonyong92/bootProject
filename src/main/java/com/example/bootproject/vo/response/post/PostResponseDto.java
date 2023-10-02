@@ -10,6 +10,8 @@ public class PostResponseDto {
     String content;
     String writerId;
     Integer score;
+    String file1;
+    String file2;
 
     public PostResponseDto(Post post) {
         this.postId = post.getPostId();
@@ -17,5 +19,7 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.writerId = post.getWriter().getMemberId();
         this.score=post.getScore();
+        this.file1=post.getFile1();
+        this.file2=post.getFile2();
     }
 }

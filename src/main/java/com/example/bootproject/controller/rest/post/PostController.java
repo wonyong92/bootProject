@@ -49,7 +49,7 @@ public class PostController {
     @Operation(summary = "게시글 / 답글 생성 API", description = "post 생성 메서드")
     @PostMapping("/create")
     @ResponseBody
-    public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
+    public ResponseEntity<? extends Object> createPost(@ModelAttribute postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
         //질문글 생성 API 에 답글 데이터 요청 방지
 
         if (dto.getParentId() != null) {
@@ -58,6 +58,7 @@ public class PostController {
         extracted(result);
 
         String id = SessionUtil.getLoginId(session);
+        log.info("{}" ,dto);
 
         long createResult = postService.createPost(dto, id);
         log.info("writer id {} created id : {}", id, createResult);

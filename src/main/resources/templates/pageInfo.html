@@ -146,6 +146,7 @@
   </div>
 
   <span id="postId" th:text="${post.postId}"></span>
+
   <div>
     <strong>Title:</strong>
     <span id="postTitle" th:text="${post.title}"></span>
@@ -153,6 +154,17 @@
   <div>
     <strong>Content:</strong>
     <span id="postContent" th:text="${post.content}"></span>
+  </div>
+  <div>
+    <strong>File 1:</strong>
+    <span id="file1" th:text="${post.file1}"></span>
+    <img th:if="${post.file1 != null}" th:src="'/post/download?postId=' + ${post.postId} + '&fileNum=1'" alt="File 1">
+  </div>
+
+  <div>
+    <strong>File 2:</strong>
+    <span id="file2" th:text="${post.file2}"></span>
+    <img th:if="${post.file2 != null}" th:src="'/post/download?postId=' + ${post.postId} + '&fileNum=2'" alt="File 2">
   </div>
 </div>
 
@@ -345,6 +357,8 @@
 
   // Fetch vote count when the page loads
   fetchVoteCount();
+
+
 
 
 </script>

@@ -103,10 +103,12 @@ public class PostServiceImpl implements PostService {
                     Path targetLocation = Paths.get(uploadPath).resolve(uniqueFileName);
                     try {
                         Files.copy(file.getInputStream(), targetLocation);
+                        file.getInputStream().close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     names.add(uniqueFileName);
+
                 }
             });
         }
