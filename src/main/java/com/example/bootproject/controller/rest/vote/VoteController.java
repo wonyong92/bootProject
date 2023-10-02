@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -26,5 +23,11 @@ public class VoteController {
         boolean result = post_vote_service.vote(vote, id, postId);
         log.info(String.valueOf(result));
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/score")
+    public ResponseEntity<? extends Object> getScore(@RequestParam Integer postId){
+        Integer score = post_vote_service.getScore(postId);
+        return ResponseEntity.ok(score);
     }
 }

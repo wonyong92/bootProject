@@ -105,5 +105,14 @@ public class PostVoteService {
             return true;
         }
     }
+
+    public Integer getScore(Integer postId) {
+        Post findPost = postRepository.findById(postId).orElse(null);
+        Integer result = null;
+        if(findPost!=null){
+            result=findPost.getScore();
+        }
+        return result;
+    }
 }
 

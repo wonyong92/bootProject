@@ -78,12 +78,42 @@
       border: none;
       float: right;
       margin-left: 10px; /* Add some margin between the buttons */
+      margin-top: 15px ;
     }
     .edit-button {
       background-color: #3498db;
       color: white;
     }
     .delete-button {
+      background-color: #e74c3c;
+      color: white;
+
+    }
+
+    .vote-section {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .vote-count {
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 10px;
+    }
+    .vote-button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .up-vote-button {
+      background-color: #3498db;
+      color: white;
+      margin-right: 5px;
+    }
+    .down-vote-button {
       background-color: #e74c3c;
       color: white;
     }
@@ -104,10 +134,17 @@
 <!-- Post Detail -->
 <div class="post-container">
   <h1>Post Detail</h1>
-  <span th:if="${#httpServletRequest.getSession(true).getAttribute('id') == post.writerId}">
+    <span id="edit-delete" th:if="${#httpServletRequest.getSession(true).getAttribute('id') == post.writerId}">
         <a href="#" class="edit-button" th:href="'/post/update/' + ${post.postId}">Edit</a>
         <a href="#" class="delete-button" onclick="deletePost()">Delete</a>
-      </span>
+    </span>
+
+  <div class="vote-section" th:if="${#httpServletRequest.getSession(true).getAttribute('id') != null}">
+    <span class="vote-count">vote:<span class="vote-count" id="voteCount">>vote:0</span></span>
+    <button class="vote-button up-vote-button" onclick="vote(1)">Upvote</button>
+    <button class="vote-button down-vote-button" onclick="vote(-1)">Downvote</button>
+  </div>
+
   <span id="postId" th:text="${post.postId}"></span>
   <div>
     <strong>Title:</strong>
@@ -266,6 +303,49 @@
       });
     }
   }
+
+  function vote(voteValue) {
+    const postId = document.getElementById('postId').textContent;
+
+    $.ajax({
+      type: "POST",
+      url: `/vote?vote=${voteValue}`,
+      data: {
+        postId: postId
+      },
+      success: function(response, status, xhr) {
+        if (response === true) {
+          alert('Vote submitted successfully!');
+          // Reload the page to refresh vote count
+          fetchVoteCount();
+        } else {
+          alert('Vote score is not changed!');
+        }
+      },
+      error: function() {
+        alert('Failed to submit vote.');
+      }
+    });
+  }
+
+  function fetchVoteCount() {
+    const postId = document.getElementById('postId').textContent;
+
+    $.ajax({
+      type: "GET",
+      url: `http://localhost:8080/vote/score?postId=${postId}`,
+      success: function(score) {
+        document.getElementById('voteCount').innerText = score;
+      },
+      error: function() {
+        alert('Failed to fetch vote count.');
+      }
+    });
+  }
+
+  // Fetch vote count when the page loads
+  fetchVoteCount();
+
 
 </script>
 
