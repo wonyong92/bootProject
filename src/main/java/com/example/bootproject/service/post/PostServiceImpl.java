@@ -71,19 +71,19 @@ public class PostServiceImpl implements PostService {
 
             }
             postRepository.save(entity);
+
             return entity.getPostId();
         }
         return -1;
     }
 
     private List<String> uploadFile(List<MultipartFile> files) throws IOException {
-        log.info("dddddddddddddd1");
         List<String> names = new ArrayList<>();
 
         if (files != null) {
             // Normalize the file name
             files.forEach(file -> {
-                if (file != null) {
+                if (file != null && !file.isEmpty()) {
                     String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 
                     // Generate a unique file name based on the current timestamp
@@ -157,11 +157,18 @@ public class PostServiceImpl implements PostService {
 
             Post entity = dto.dtoToEntity(member, post.getParent());
             entity.setScore(post.getScore());
-            entity.setFile1(names.get(0));
-            entity.setFile2(names.get(1));
+            try {
+                entity.setFile1(names.get(0));
+                entity.setFile2(names.get(1));
+            }catch (Exception e){
 
-            postRepository.save(entity);
-            return entity.getPostId();
+            }
+            post.setFile1(entity.getFile1());
+            post.setFile2(entity.getFile2());
+            post.setContent(entity.getContent());
+            post.setTitle(entity.getTitle());
+            postRepository.save(post);
+            return post.getPostId();
         }
         return -1;
     }

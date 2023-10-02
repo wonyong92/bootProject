@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Post</title>
+    <style>
+        body, html {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f2f2f2; /* Background color for the page */
+        }
+
+        form {
+            max-width: 600px;
+            width: 100%;
+            padding: 40px 20px 20px; /* Adjusted padding: top 40px, bottom and left/right 20px */
+            box-sizing: border-box; /* Include padding in width calculation */
+            background-color: #fff; /* Form background color */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow */
+        }
+
+        .container {
+            text-align: center; /* Center the content */
+        }
+
+        h1 {
+            font-size: 24px; /* Adjust font size */
+            margin-bottom: 20px; /* Add some margin */
+            color: #3498db; /* Heading color */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea, input[type="file"] {
+            width: calc(100% - 12px); /* Adjusting for padding */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Style the buttons */
+        button, input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #3498db; /* Button color */
+            color: #fff; /* Text color */
+        }
+
+        button:hover {
+            background-color: #2980b9; /* Button color on hover */
+        }
+        #profileLogo {
+            width: 200px;
+        }
+        #cancel-button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #cancel-button:hover {
+            background-color: darkred;
+        }
+        #edit{
+            display: none;
+        }
+        #postId{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="text-align: center;">
+        <a href="/main">
+            <img id=profileLogo src="/static/img/logo.png" alt="Logo">
+        </a>
+    </div>
+
+    <span id="edit" th:text="${edit}"></span>
+    <span id="postId" th:text="${post.postId}"></span>
+
+<form class = "postForm" th:action="${edit} ? '/post/update/'+${post.postId} : '/post/create'" method="post" enctype="multipart/form-data">
+    <h1 th:text="${edit} ? 'Edit Post' : 'Create a Post'"></h1>
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" th:value="${edit} ? ${post.title} : ''"><br><br>
+
+    <label for="content">Content:</label><br>
+    <textarea id="content" name="content" rows="5" cols="40" th:text="${edit} ? ${post.content} : ''"></textarea><br><br>
+
+    <label for="file1">Upload File 1:</label><br>
+    <input type="file" id="file1" name="file1"><br><br>
+
+    <label for="file2">Upload File 2:</label><br>
+    <input type="file" id="file2" name="file2"><br><br>
+
+    <th:block th:if="${edit}">
+        <button class="submitBtn" type="button">Edit</button>
+    </th:block>
+
+    <th:block th:unless="${edit}">
+        <button class="submitBtn" type="button">Create</button>
+    </th:block>
+
+    <button id ="cancel-button" type="button" onclick="cancel()">Cancel</button>
+
+</form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function cancel() {
+        window.location.href = '/main';
+    }
+    const postId = document.getElementById("postId").textContent;
+    function handleFormSubmission() {
+        console.log("ddddd");
+        $.ajax({
+            type: 'POST',
+            url: $('.postForm').attr('action'),
+            data: new FormData($('.postForm')[0]),
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                let successMessage = ($('#edit').text().trim() === 'true') ? 'Edit' : 'Create';
+                successMessage += ' 성공했습니다.';
+                alert('Post ' + successMessage);
+                window.location.href = `/post/read/${postId}`;
+            },
+            error: function(xhr, status, error) {
+                console.log('Error:', error);  // 에러를 로그로 기록
+                let errorMessage = ($('#edit').text().trim() === 'true') ? 'Edit' : 'Create';
+                errorMessage += ' 실패했습니다.';
+                alert(errorMessage);
+            }
+        });
+    }
+
+    $('.submitBtn').click(function(event) {
+        event.preventDefault();
+        handleFormSubmission();
+    });
+</script>
+</body>
+</html>

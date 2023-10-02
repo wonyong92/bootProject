@@ -25,12 +25,12 @@ public class Post {
     String content;
 
 
-    @JsonBackReference
+
     @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "writer_id")
     Member writer;
 
-    @JsonBackReference
+
     @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
 
     List<Comment> comments;

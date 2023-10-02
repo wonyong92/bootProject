@@ -41,6 +41,7 @@ public class MemberServiceImpl implements MemberService {
         Member findMember = memberRepository.findById(dto.getId()).orElse(null);
         log.info("found: {}", findMember);
         if (findMember != null) {
+            log.info("update {}",dto.updateEntity(findMember));
             memberRepository.save(dto.updateEntity(findMember));
             return true;
         }

@@ -51,7 +51,7 @@
             function search() {
                 const searchText = document.getElementById('search-input').value;
                 const encodedSearchText = encodeURIComponent(searchText);
-
+                if(searchText.trim() !== ''){
                 fetch('http://localhost:8080/post/search?title=' + encodedSearchText)
                     .then(response => response.json())
                     .then(data => {
@@ -63,6 +63,9 @@
                         updateAllQuestionsText(data.totalElements);
                     })
                     .catch(error => console.error('Error searching:', error));
+                }else{
+                    document.getElementById('search-input').value = '';
+                }
             }
 
             // function logout() {

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Post Detail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .post-container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      width: 600px;
+      margin: auto;
+      margin-bottom: 20px;
+      background-color: #fff; /* Post container background color */
+    }
+    .comment-container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      width: 600px;
+      margin: auto;
+      background-color: #fff; /* Comment container background color */
+    }
+    .comment-input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .comment-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+    }
+    .comment-button:hover {
+      background-color: #45a049;
+    }
+
+    .comment {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9; /* Comment background color */
+    }
+
+    #comment-input-container {
+      margin-top: 20px;
+    }
+
+    #repliesSection {
+      margin-top: 20px;
+    }
+
+    #postId {
+      display: none;
+    }
+
+    #profileLogo {
+      width: 200px;
+    }
+
+    .edit-button, .delete-button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+      float: right;
+      margin-left: 10px; /* Add some margin between the buttons */
+    }
+    .edit-button {
+      background-color: #3498db;
+      color: white;
+    }
+    .delete-button {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<!-- Logo and Main Page Link -->
+<div style="text-align: center;">
+  <a href="/main">
+    <img id=profileLogo src="/static/img/logo.png" alt="Logo">
+
+  </a>
+
+</div>
+
+<!-- Post Detail -->
+<div class="post-container">
+  <h1>Post Detail</h1>
+  <span th:if="${#httpServletRequest.getSession(true).getAttribute('id') == post.writerId}">
+        <a href="#" class="edit-button" th:href="'/post/update/' + ${post.postId}">Edit</a>
+        <a href="#" class="delete-button" onclick="deletePost()">Delete</a>
+      </span>
+  <span id="postId" th:text="${post.postId}"></span>
+  <div>
+    <strong>Title:</strong>
+    <span id="postTitle" th:text="${post.title}"></span>
+  </div>
+  <div>
+    <strong>Content:</strong>
+    <span id="postContent" th:text="${post.content}"></span>
+  </div>
+</div>
+
+<div id="commentSection" class="comment-container">
+  <h2>Comments</h2>
+  <div id="commentSectionInner"></div>
+</div>
+
+<!-- Comment Section -->
+<div class="comment-container" id="comment-input-container" th:if="${#httpServletRequest.getSession(true).getAttribute('id') != null}">
+  <h2>Write Comments</h2>
+  <textarea id="commentInput" class="comment-input" placeholder="Enter your comment"></textarea>
+  <button class="comment-button" onclick="submitComment()">Submit Comment</button>
+</div>
+
+<div id="repliesSection" class="comment-container">
+  <h2>Replies</h2>
+</div>
+
+<script>
+
+  function submitComment() {
+    const postId = document.getElementById('postId').textContent;
+
+    const commentContent = document.getElementById('commentInput').value;
+
+    $.ajax({
+      type: "POST",
+      url: `/comment/create`,
+      data: {
+        postId: postId,
+        content: commentContent
+      },
+      success: function(response, status, xhr) {
+        if (xhr.status===201 || xhr.status===200) {
+          alert('Comment submitted successfully!');
+          // Reload the page to refresh comments
+          window.location.reload();
+        } else {
+          alert('Failed to submit comment.');
+        }
+      },
+      error: function() {
+        alert('Failed to submit comment.');
+      }
+    });
+  }
+
+
+
+  function getComment() {
+    const postIdElement = document.getElementById('postId');
+    console.log("getCOmment!");
+    const postId = postIdElement.textContent;
+
+    // Send AJAX request to retrieve comments
+    $.ajax({
+      type: "GET",
+      url: `http://localhost:8080/comment/read/post/${postId}`,
+      success: function(comments) {
+        displayComments(comments);
+      },
+      error: function() {
+        console.error('Failed to retrieve comments.');
+      }
+    });
+  }
+
+  getComment();
+
+  function displayComments(comments) {
+    const commentContainer = document.getElementById('commentSectionInner');
+    commentContainer.innerHTML = '';  // Clear previous content
+
+    // Loop through comments and create HTML elements to display them
+    for (const comment of comments) {
+      const commentDiv = document.createElement('div');
+      commentDiv.classList.add('comment');
+      commentDiv.innerHTML = `<strong>Comment ID:</strong> ${comment.commentId}<br>
+                                <strong>Content:</strong> ${comment.content}<br>
+                                <strong>Writer ID:</strong> ${comment.writerId}<hr>`;
+      commentContainer.appendChild(commentDiv);
+    }
+  }
+
+
+
+  function displayReplies(replies) {
+    const repliesSection = document.getElementById('repliesSection');
+
+    replies.forEach(reply => {
+      const replyDiv = document.createElement('div');
+      replyDiv.classList.add('comment');
+
+      const titleLink = document.createElement('a');
+      titleLink.href = `http://localhost:8080/post/read/${reply.postId}`;
+      titleLink.innerText = `Answer Title: ${reply.title}`;
+      titleLink.style.display = 'block';  // Display as a block to separate links
+
+      const writerDiv = document.createElement('div');
+      writerDiv.innerText = `Writer ID: ${reply.writerId}`;
+
+      replyDiv.appendChild(titleLink);
+      replyDiv.appendChild(writerDiv);
+      repliesSection.appendChild(replyDiv);
+    });
+  }
+
+
+  function fetchReplies() {
+    const postId = document.getElementById('postId').textContent;
+    $.ajax({
+      type: "GET",
+      url: `http://localhost:8080/post/answers?parentId=${postId}`,
+      success: function(replies) {
+        // Call function to display replies
+        displayReplies(replies);
+      },
+      error: function() {
+        alert('Failed to fetch replies.');
+      }
+    });
+  }
+
+  // Fetch replies when the page loads
+  fetchReplies();
+
+  function deletePost() {
+    const postId = document.getElementById('postId').textContent;
+    if (confirm('Are you sure you want to delete this post?')) {
+      // Send AJAX request to delete the post
+      $.ajax({
+        type: "GET",
+        url: `http://localhost:8080/post/delete/${postId}`,
+        success: function(response, status, xhr) {
+          console.log(`response ${response}`)
+          if (xhr.status === 200) {
+            alert('Post deleted successfully!');
+            // Redirect to main page or any other page after deletion if needed
+            window.location.href = '/main'; // Change the URL as needed
+          } else {
+            alert('Failed to delete post.');
+          }
+        },
+        error: function() {
+          alert('Failed to delete post.');
+        }
+      });
+    }
+  }
+
+</script>
+
+</body>
+</html>

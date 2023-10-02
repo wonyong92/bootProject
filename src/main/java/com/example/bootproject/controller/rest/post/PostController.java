@@ -19,10 +19,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -30,11 +32,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.bootproject.system.util.BindingResultUtil.extracted;
 
-@RestController
+@Controller
 @RequestMapping("/post")
 @RequiredArgsConstructor
 @Slf4j
@@ -42,9 +44,11 @@ import static com.example.bootproject.system.util.BindingResultUtil.extracted;
 public class PostController {
 
     private final PostService postService;
+    private final PostRepository postRepository;
 
     @Operation(summary = "게시글 / 답글 생성 API", description = "post 생성 메서드")
     @PostMapping("/create")
+    @ResponseBody
     public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
         //질문글 생성 API 에 답글 데이터 요청 방지
 
@@ -61,9 +65,10 @@ public class PostController {
     }
 
     @GetMapping("/read/{postId}")
-    public ResponseEntity<? extends Object> readPost(@PathVariable Integer postId) {
+    public String readPost(@PathVariable Integer postId, Model model, HttpServletResponse httpServletResponse) {
         if (postId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return "main";
         }
 
         Post findPost = postService.getPost(postId);
@@ -72,10 +77,12 @@ public class PostController {
         // 해결방법 2. 그냥 필요한 필드만 dto로 뽑아내기
         // 해결방법 3. toString()을 필요한 필드로 직접 구현
         log.info("findPost : {}", new PostResponseDto(findPost));
-        return new ResponseEntity<>(new PostResponseDto(findPost), HttpStatus.OK);
+        model.addAttribute("post", new PostResponseDto(findPost));
+        return "pageInfo";
     }
 
     @GetMapping({""})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
+    @ResponseBody
     public ResponseEntity<? extends Object> listPosts(Model model, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "id,desc") String sort) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sort.split(",")[1]), sort.split(",")[0]);  // 페이지당 10개씩 표시
         Page<PostResponseDto> postPage = postService.findAll(pageable);
@@ -84,6 +91,7 @@ public class PostController {
     }
 
     @GetMapping({"/{memberId}"})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
+    @ResponseBody
     public ResponseEntity<? extends Object> listPostsByMemberId(Model model, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "id,desc") String sort, @PathVariable(required = false) String memberId) {
         if (memberId == null || memberId.trim() == "") {
             return ResponseEntity.noContent().build();
@@ -95,6 +103,7 @@ public class PostController {
     }
 
     @PostMapping("/update/{postId}")
+    @ResponseBody
     public ResponseEntity<? extends Object> createPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, @PathVariable Integer postId, HttpSession session) throws Exception {
 
         extracted(result);
@@ -103,11 +112,11 @@ public class PostController {
 
         long createResult = postService.updatePost(dto, id, postId);
         log.info("writer id {} updated post id : {}", id, createResult);
-        return createResult != -1 ? ResponseEntity.created(new URI("http://localhost:8080/post/" + createResult)).build() : ResponseEntity.noContent().build();
+        return createResult != -1 ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 
-
     @GetMapping("/delete/{postId}")
+    @ResponseBody
     public ResponseEntity<? extends Object> deletePost(@PathVariable Integer postId, HttpSession session) throws URISyntaxException {
         String id = SessionUtil.getLoginId(session);
 
@@ -117,14 +126,16 @@ public class PostController {
     }
 
     @GetMapping("/answers")
+    @ResponseBody
     public ResponseEntity<? extends Object> getPostsByParentId(@RequestParam Integer parentId) {
         if (parentId == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(postService.getPostsByParentId(parentId));
+        return ResponseEntity.ok(postService.getPostsByParentId(parentId).stream().map(PostResponseDto::new).collect(Collectors.toList()));
     }
 
     @PostMapping("/create/answer")
+    @ResponseBody
     public ResponseEntity<? extends Object> createAnswerPost(@ModelAttribute @Valid postCreateDto dto, BindingResult result, HttpSession session) throws Exception {
 
         if (dto.getParentId() == null) {
@@ -141,6 +152,7 @@ public class PostController {
     }
 
     @GetMapping("/download")
+    @ResponseBody
     public ResponseEntity<Resource> downloadFile(@RequestParam Integer postId, @RequestParam(defaultValue = "1") int fileNum) throws IOException {
 
         Resource resource = postService.loadFileAsResource(postId, fileNum);
@@ -154,17 +166,38 @@ public class PostController {
     }
 
     @GetMapping("/search")
+    @ResponseBody
     public ResponseEntity<? extends Object> searchPostsByTitle(@RequestParam("title") String titleInput, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page) {
         // Using the PostRepository to search for posts by title
         Pageable pageable = PageRequest.of(page, size);  // 페이지당 10개씩 표시
-        Page<PostResponseDto> postList = postService.findByTitleContaining(titleInput,pageable);
+        Page<PostResponseDto> postList = postService.findByTitleContaining(titleInput, pageable);
         return ResponseEntity.ok(postList);
     }
 
-    private final PostRepository postRepository;
     @GetMapping("/test")
-    public Object test(){
+    @ResponseBody
+    public Object test() {
         return postRepository.findByParentIsNull();
+    }
+
+    @GetMapping("/update/{postId}")
+    public String updatePost(Model model, @PathVariable Integer postId, HttpSession session) throws Exception {
+        if (session != null && session.getAttribute("id") != null) {
+            Post findPost = postService.getPost(postId);
+            log.info("{}", findPost.getWriter().getMemberId().equals(session.getAttribute("id")));
+            if (findPost.getWriter().getMemberId().equals(session.getAttribute("id"))) {
+                model.addAttribute("post", findPost);
+                model.addAttribute("edit", true);
+                return "pageWrite";
+            }
+        }
+        throw new Exception("Not Authorized Access");
+    }
+
+    @GetMapping("/create")
+    public String createPostView(Model model, @PathVariable Integer postId, HttpSession session) throws Exception {
+        model.addAttribute("edit", false);
+        return "pageWrite";
     }
 
 }

@@ -57,6 +57,15 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
         return dtoPage;
     }
 
-    @Query(value = "SELECT * FROM post WHERE MATCH(title) AGAINST(CONCAT('*', :input, '*') IN BOOLEAN MODE) ORDER BY MATCH(title) AGAINST(CONCAT('*', :input, '*') IN BOOLEAN MODE) DESC", nativeQuery = true)
+    @Query(value = "SELECT *, " +
+            "       LENGTH(:input)/LENGTH(title)  AS similarity " +
+            "FROM post " +
+            "WHERE " +
+            "    MATCH(title) AGAINST(CONCAT(:input, '*') IN BOOLEAN MODE) " +
+            "   OR ( " +
+            "        MATCH(title) AGAINST(CONCAT(:input, '*') IN BOOLEAN MODE) = 0 " +
+            "        AND title LIKE CONCAT('%', :input, '%') " +
+            "    ) " +
+            "ORDER BY similarity DESC, MATCH(title) AGAINST(CONCAT(:input, '*') IN BOOLEAN MODE) DESC", nativeQuery = true)
     Page<Post> findPostsByTitle(@Param("input") String input, Pageable pageable);
 }

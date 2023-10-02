@@ -8,15 +8,17 @@
         .main_container {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
-            margin: 0;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header-section {
             font-size: 40px;
             margin-bottom: 20px;
+
         }
 
         .question-card {
@@ -77,6 +79,25 @@
         .card-title {
             color: blue;
         }
+        .addQ{
+            display: flex;
+            justify-content: space-between;
+        }
+        .addQ-button {
+
+            margin-left: auto; /* Move the button to the right */
+        }
+
+        .addQ-button button {
+            /* Optional styles for the button */
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
 
         /* Rest of your styles */
     </style>
@@ -85,9 +106,15 @@
     <body>
     <!-- Your content -->
     <div class="main_container">
-        <div class="header-section">
-            All Questions
+        <div class = "addQ">
+            <div class="header-section">
+                All Questions
+            </div>
+            <div class="addQ-button" id="addQ-button">
+                <button th:if="${#httpServletRequest.getSession(true).getAttribute('id') != null}" onclick="redirectToCreatePage()">Add Question</button>
+            </div>
         </div>
+
         <div class="card-section">
         </div>
         <div class="pagination">
@@ -205,6 +232,10 @@
                 });
                 paginationContainer.appendChild(nextButton);
             }
+        }
+
+        function redirectToCreatePage() {
+            window.location.href = 'http://localhost:8080/post/create';
         }
     </script>
 </th:block>

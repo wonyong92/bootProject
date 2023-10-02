@@ -157,24 +157,26 @@
 
     function updateNickname() {
         const newNickname = document.getElementById('newNickname').value;
+        const id = document.getElementById('memberId').innerText;
         const currentNickname = document.querySelector('.profile-info div').innerText.trim(); // Get current nickname
 
         if (newNickname.trim() === currentNickname) {
             alert('Please enter a different nickname.'); // Alert if the new nickname is the same as the current nickname
             return;
         }
+        console.log(`newNickname ${newNickname}`);
 
         $.ajax({
             type: "POST",
             url: "/member/update",
             data: {
-                id: null,
+                id: id,
                 name: newNickname,
                 pwd: null
             },
             success: function (response) {
                 alert('Nickname updated successfully!');
-                window.location.reload();
+                window.location.href='http://localhost:8080/member/profile';
             },
             error: function () {
                 alert('Failed to update nickname.');
