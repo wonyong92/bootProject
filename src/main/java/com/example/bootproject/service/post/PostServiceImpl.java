@@ -70,6 +70,7 @@ public class PostServiceImpl implements PostService {
             } catch (Exception e) {
 
             }
+            log.info("names{}",names.toString());
             postRepository.save(entity);
 
             return entity.getPostId();

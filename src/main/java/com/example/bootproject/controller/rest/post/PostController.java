@@ -82,6 +82,20 @@ public class PostController {
         return "pageInfo";
     }
 
+    @GetMapping("/read/react/{postId}")
+    @ResponseBody
+    public PostResponseDto reactRead(@PathVariable Integer postId, Model model, HttpServletResponse httpServletResponse) {
+        if (postId == null) {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return null;
+        }
+        Post findPost = postService.getPost(postId);
+        log.info("findPost : {}", new PostResponseDto(findPost));
+        return new PostResponseDto(findPost);
+    }
+
+
+
     @GetMapping({""})//스프링 부트에서는 /를 자동으로 제외하지 않으므로 사용 주의
     @ResponseBody
     public ResponseEntity<? extends Object> listPosts(Model model, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "id,desc") String sort) {

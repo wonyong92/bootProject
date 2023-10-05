@@ -1,5 +1,6 @@
 package com.example.bootproject.config;
 
+import com.example.bootproject.system.interceptor.CorsInterceptor;
 import com.example.bootproject.system.interceptor.SessionInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         //*: 모든 문자열과 일치
         //**: 모든 하위 경로를 포함하여 일치
         registry.addInterceptor(new SessionInterceptor()).addPathPatterns("/*/create*/**", "*/update*/**", "*/delete*/**");
+        registry.addInterceptor(new CorsInterceptor());
 
     }
     //스프링 부트의 기본 리소스 핸들러를 유지 - properties와 동시에 사용 가능

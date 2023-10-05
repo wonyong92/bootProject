@@ -43,6 +43,8 @@ public class CommentController {
     public ResponseEntity<String> createComment(@Valid @ModelAttribute CommentCreateDto commentCreateDto, BindingResult bindingResult, HttpSession session, @RequestParam(required = false) Integer postId) throws Exception {
         BindingResultUtil.extracted(bindingResult);
         String id = SessionUtil.getLoginId(session);
+        log.info("id {}",id);
+        log.info("dto : ",commentCreateDto.toString());
         Comment comment = commentService.createComment(commentCreateDto, id, postId);
 
         return comment != null ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);

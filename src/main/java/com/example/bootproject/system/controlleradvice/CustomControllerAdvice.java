@@ -15,12 +15,14 @@ public class CustomControllerAdvice {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public String handle404(NoHandlerFoundException ex) {
+        ex.printStackTrace();
         return "404";
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ModelAndView handleException(Exception e) {
+        e.printStackTrace();
         ModelAndView mav = new ModelAndView("generic-error");
         mav.addObject("message", "An error occurred: " + e.getMessage());
         return mav;
