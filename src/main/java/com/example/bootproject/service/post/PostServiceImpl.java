@@ -4,6 +4,7 @@ import com.example.bootproject.entity.member.Member;
 import com.example.bootproject.entity.post.Post;
 import com.example.bootproject.repository.member.MemberRepository;
 import com.example.bootproject.repository.post.PostRepository;
+import com.example.bootproject.repository.vote.PostVoteRepository;
 import com.example.bootproject.vo.request.post.postCreateDto;
 import com.example.bootproject.vo.response.post.PostResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final PostVoteRepository postVoteRepository;
     @Value("${multipart.upload.path}")
     private String uploadPath;
 
@@ -186,6 +188,7 @@ public class PostServiceImpl implements PostService {
         Member member = memberRepository.findById(id).orElse(null);
         Post post = postRepository.findByPostIdAndWriter_MemberId(postId, id).orElse(null);
         if (member != null && post != null) {
+            postVoteRepository.deleteByPost_PostId(postId);
             return postRepository.deleteByIdAndCheckSuc(postId);
         }
         return false;

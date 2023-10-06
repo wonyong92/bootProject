@@ -2,6 +2,7 @@ package com.example.bootproject.entity.post;
 
 import com.example.bootproject.entity.comment.Comment;
 import com.example.bootproject.entity.member.Member;
+import com.example.bootproject.entity.vote.PostVote;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,7 @@ public class Post {
     Integer score;
     private String file1;
     private String file2;
+
 
     public Post(String title, String content, Member member, Post parent) {
         this.title = title;

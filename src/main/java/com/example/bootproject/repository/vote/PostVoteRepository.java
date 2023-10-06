@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface PostVoteRepository extends JpaRepository<PostVote, PostVoteId> {
     Optional<PostVote> findByMemberMemberIdAndPostPostId(String member_id, Integer post_id);
+
+    void deleteByPost_PostId(Integer postId);
 }
